@@ -1,33 +1,36 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="utf-8">
-  <title>Active Assignments</title>
+  <meta charset="UTF-8">
+  <title>ASSIGNMENTS</title>
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="mission.js" defer></script>
 </head>
 <body>
 
-<div id="top-banner">SECRET</div>
+<div class="mission-box">
+  <!-- Oberer Banner -->
+  <div id="top-banner">SECRET</div>
 
-<div class="chat-box">
-  <img src="logo-mission.png" class="logo" alt="Mission Logo">
-  <h2 class="title">Active Assignments</h2>
+  <!-- Logo -->
+  <img src="ministry-coat-of-arms-cropped.png" class="logo" alt="Portal Logo">
 
-  <div id="mission-container">
-    <p id="mission-title"></p>
-    <p>Status: <span id="mission-status"></span></p>
-    <p>Response by: <span id="mission-user"></span></p>
-    <div class="input-row">
-      <button id="accept-btn">Accept</button>
-      <button id="reject-btn">Reject</button>
-    </div>
-  </div>
+  <!-- Dynamischer Missions-Titel -->
+  <h2 id="mission-title"></h2>
 
-  <button id="back-btn">Back to Chat</button>
+  <!-- Dynamische Missionsbeschreibung -->
+  <p id="mission-desc"></p>
+
+  <!-- Buttons -->
+  <button id="accept-btn">Accept</button>
+  <button id="reject-btn">Reject</button>
+
+  <!-- Live Status -->
+  <p id="mission-status"></p>
+
+  <!-- Unterer Banner -->
+  <div id="bottom-banner">SECRET</div>
 </div>
 
-<div id="bottom-banner">SECRET</div>
-
+<script type="module" src="mission.js"></script>
 </body>
 </html>
