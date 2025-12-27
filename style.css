@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.login-box {
+  width: 320px;
+  padding: 20px;
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.logo {
+  display: block;
+  width: 50%;
+  margin: 0 auto 10px auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.login-label {
+  width: 80px;
+  text-align: right;
+  margin-right: 10px;
+  font-family: serif;
+}
+
+.login-row input {
+  flex: 1;
+  padding: 6px;
+  font-family: sans-serif;
+}
+
+button {
+  font-family: serif;
+  padding: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+
+#err {
+  color: red;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+#top-banner, #bottom-banner {
+  background: red;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 6px 0;
+}
+
+#bottom-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+.chat-box {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+#log div {
+  white-space: pre-wrap; /* für Mehrzeilen */
+  margin-bottom: 6px;
+}
+
+.input-row {
+  display: flex;
+  gap: 6px;
+}
+
+.input-row textarea {
+  flex: 1;
+  height: 60px;
+  padding: 6px;
+  resize: none;
+}
+
+.input-row button {
+  width: 80px;
+  font-family: serif;
+}
+
+#mission-btn {
+  width: 100%;
+  margin-top: 10px;
+  font-family: serif;
+  padding: 6px;
+}
+
+/* Mission Portal */
+#mission-container {
+  font-family: monospace;
+  font-size: 0.95em;
+  margin-bottom: 10px;
+}
+
+#mission-container p {
+  margin: 6px 0;
+}
+
+#mission-container .input-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+#mission-container button {
+  font-family: serif;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+/* Back button */
+#back-btn {
+  width: 100%;
+  margin-top: 15px;
+  font-family: serif;
+  padding: 6px;
+}
+
+/* Logos und Titel bleiben identisch */
+.logo {
+  display: block;
+  width: 50%;
+  margin: 0 auto 10px auto;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Secret banners */
+#top-banner, #bottom-banner {
+  background: red;
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 6px 0;
+}
+
+#bottom-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
+
+/* Responsive Box */
+.chat-box {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
