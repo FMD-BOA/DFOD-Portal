@@ -7,11 +7,6 @@ import {
   query,
   orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 /* Firebase Config */
 const firebaseConfig = {
@@ -22,61 +17,36 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 /* DOM */
 const loginDiv = document.getElementById("login");
-const chatDiv = document.getElementById("chat");
+const chatDiv  = document.getElementById("chat");
 const logDiv   = document.getElementById("log");
 const msgIn    = document.getElementById("msg");
 const sendBtn  = document.getElementById("send-btn");
 const loginBtn = document.getElementById("login-btn");
 const missionBtn = document.getElementById("mission-btn");
-const errDiv = document.getElementById("err");
+const errDiv   = document.getElementById("err");
 
 let currentUser = null;
 
-/* Login */
-loginBtn.addEventListener("click", async () => {
-  const emailMap = {
-    "topazdawn": "topazdawn@fmd.gov",
-    "dfod": "dfod@fmd.gov"
-  };
+/* Lokaler Login */
+const userMap = {
+  "topazdawn": "password1",
+  "dfod": "password2"
+};
 
+loginBtn.addEventListener("click", () => {
   const username = document.getElementById("user").value.trim();
   const password = document.getElementById("pw").value;
 
-  if (!username || !password) {
-    errDiv.textContent = "Fill in both fields.";
-    return;
-  }
-
-  const email = emailMap[username];
-  if (!email) {
-    errDiv.textContent = "Unknown user.";
-    return;
-  }
-
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
+  if (username in userMap && userMap[username] === password) {
+    currentUser = username;
     loginDiv.style.display = "none";
     chatDiv.style.display = "block";
     errDiv.textContent = "";
-  } catch (e) {
-    errDiv.textContent = "Login failed.";
-    console.error(e);
-  }
-});
-
-/* Auth check */
-onAuthStateChanged(auth, user => {
-  if (user) {
-    currentUser = user.email.split("@")[0]; // nur Username anzeigen
-    loginDiv.style.display = "none";
-    chatDiv.style.display = "block";
   } else {
-    loginDiv.style.display = "block";
-    chatDiv.style.display = "none";
+    errDiv.textContent = "Invalid login.";
   }
 });
 
