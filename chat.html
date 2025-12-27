@@ -1,9 +1,37 @@
-<div id="top-banner">SECRET</div>
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>DFOD CHAT</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<!-- LOGIN -->
+<div class="login-box" id="login">
+  <img src="ministry-coat-of-arms-cropped.png" class="logo" alt="Login Logo">
+  <h2 class="title">DFOD PORTAL LOGIN</h2>
+
+  <div class="login-row">
+    <label for="user" class="login-label">Username:</label>
+    <input id="user" placeholder="">
+  </div>
+
+  <div class="login-row">
+    <label for="pw" class="login-label">Password:</label>
+    <input id="pw" type="password" placeholder="">
+  </div>
+
+  <button id="login-btn">Login</button>
+  <div id="err"></div>
+</div>
+
+<!-- CHAT -->
 <div class="chat-box" id="chat" style="display:none">
-  
-<!-- Mission Portal Button -->
-<button id="mission-btn"> Assignments</button>
+  <div id="top-banner">SECRET</div>
+
+  <!-- Mission Portal Button -->
+  <button id="mission-btn">Assignments</button>
 
   <img src="ministry-coat-of-arms-cropped.png" class="logo" alt="Chat Logo">
   <h2 class="title">DFOD CHAT</h2>
@@ -15,6 +43,9 @@
     <button id="send-btn">Send</button>
   </div>
 
-  <!-- Unterer Banner -->
   <div id="bottom-banner">SECRET</div>
 </div>
+
+<script type="module" src="chat.js"></script>
+</body>
+</html>

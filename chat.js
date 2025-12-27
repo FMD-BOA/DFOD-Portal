@@ -9,8 +9,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import {
   getAuth,
-  onAuthStateChanged,
-  signOut
+  signInWithEmailAndPassword,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 /* Firebase Config */
@@ -20,44 +20,72 @@ const firebaseConfig = {
   projectId: "fmd-dfod-portal-ca1da",
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 
 /* DOM */
-const logDiv     = document.getElementById("log");
-const msgIn      = document.getElementById("msg");
-const sendBtn    = document.getElementById("send-btn");
+const loginDiv = document.getElementById("login");
+const chatDiv = document.getElementById("chat");
+const logDiv   = document.getElementById("log");
+const msgIn    = document.getElementById("msg");
+const sendBtn  = document.getElementById("send-btn");
+const loginBtn = document.getElementById("login-btn");
 const missionBtn = document.getElementById("mission-btn");
+const errDiv = document.getElementById("err");
 
-let currentUserEmail = null;
+let currentUser = null;
 
-/* Email → Username */
-function emailToUsername(email) {
-  if (email === "topazdawn@fmd.gov") return "A";
-  if (email === "dfod@fmd.gov") return "B";
-  return "UNKNOWN";
-}
+/* Login */
+loginBtn.addEventListener("click", async () => {
+  const emailMap = {
+    "topazdawn": "topazdawn@fmd.gov",
+    "dfod": "dfod@fmd.gov"
+  };
 
-/* Auth check */
-onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "index.html";
+  const username = document.getElementById("user").value.trim();
+  const password = document.getElementById("pw").value;
+
+  if (!username || !password) {
+    errDiv.textContent = "Fill in both fields.";
     return;
   }
 
-  currentUserEmail = user.email;
+  const email = emailMap[username];
+  if (!email) {
+    errDiv.textContent = "Unknown user.";
+    return;
+  }
 
-  // Kein persistenter Login
-  signOut(auth);
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    loginDiv.style.display = "none";
+    chatDiv.style.display = "block";
+    errDiv.textContent = "";
+  } catch (e) {
+    errDiv.textContent = "Login failed.";
+    console.error(e);
+  }
+});
+
+/* Auth check */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    currentUser = user.email.split("@")[0]; // nur Username anzeigen
+    loginDiv.style.display = "none";
+    chatDiv.style.display = "block";
+  } else {
+    loginDiv.style.display = "block";
+    chatDiv.style.display = "none";
+  }
 });
 
 /* Send message */
 sendBtn.addEventListener("click", async () => {
-  if (!msgIn.value.trim() || !currentUserEmail) return;
+  if (!msgIn.value.trim() || !currentUser) return;
 
   await addDoc(collection(db, "messages"), {
-    user: currentUserEmail,
+    user: currentUser,
     text: msgIn.value,
     time: Date.now()
   });
@@ -65,7 +93,7 @@ sendBtn.addEventListener("click", async () => {
   msgIn.value = "";
 });
 
-/* Mission Portal */
+/* Mission Portal Button */
 missionBtn.addEventListener("click", () => {
   window.location.href = "mission.html";
 });
@@ -75,17 +103,12 @@ onSnapshot(
   query(collection(db, "messages"), orderBy("time")),
   snap => {
     logDiv.innerHTML = "";
-
     snap.forEach(doc => {
       const m = doc.data();
       const line = document.createElement("div");
-
-      line.textContent =
-        `${emailToUsername(m.user)}: ${m.text} (GMT ${new Date(m.time).toUTCString()})`;
-
+      line.textContent = `${m.user}: ${m.text} (GMT ${new Date(m.time).toUTCString()})`;
       logDiv.appendChild(line);
     });
-
     logDiv.scrollTop = logDiv.scrollHeight;
   }
 );
