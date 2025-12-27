@@ -1,7 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
   getFirestore,
+  collection,
   doc,
+  getDocs,
   onSnapshot,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
@@ -17,11 +19,12 @@ const firebaseConfig = {
   projectId: "fmd-dfod-portal-ca1da",
 };
 
-const app  = initializeApp(firebaseConfig);
-const db   = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* DOM Elemente */
+/* DOM */
+const missionSelect = document.getElementById("mission-select");
 const titleEl = document.getElementById("mission-title");
 const descEl = document.getElementById("mission-desc");
 const acceptBtn = document.getElementById("accept-btn");
@@ -29,6 +32,7 @@ const rejectBtn = document.getElementById("reject-btn");
 const statusEl = document.getElementById("mission-status");
 
 let currentUser = null;
+let missionRef = null;
 
 /* Auth check */
 onAuthStateChanged(auth, user => {
@@ -39,28 +43,53 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* Aktuelle Mission auswählen */
-const missionId = "mission_001";  // ID kann beliebig sein
-const missionRef = doc(db, "missions", missionId);
+/* Alle Missionen abrufen */
+const missionsCol = collection(db, "missions");
+getDocs(missionsCol).then(snapshot => {
+  missionSelect.innerHTML = ""; // alte Option entfernen
+  snapshot.forEach(docSnap => {
+    const option = document.createElement("option");
+    option.value = docSnap.id;
+    option.textContent = docSnap.data().title;
+    missionSelect.appendChild(option);
+  });
 
-/* Live-Daten abrufen */
-onSnapshot(missionRef, docSnap => {
-  if (!docSnap.exists()) {
-    titleEl.textContent = "MISSION UNKNOWN";
-    descEl.textContent = "";
-    statusEl.textContent = "Status: pending";
-    return;
+  // direkt erste Mission auswählen
+  if (missionSelect.options.length > 0) {
+    missionSelect.value = missionSelect.options[0].value;
+    loadMission(missionSelect.value);
   }
-
-  const data = docSnap.data();
-  titleEl.textContent = data.title;
-  descEl.textContent = data.description;
-  statusEl.textContent = `Mission status: ${data.status ? data.status.toUpperCase() : "PENDING"}`;
 });
 
-/* Accept / Reject Buttons */
+/* Mission wechseln */
+missionSelect.addEventListener("change", e => {
+  loadMission(e.target.value);
+});
+
+/* Funktion, um eine Mission zu laden und live zu beobachten */
+function loadMission(id) {
+  if (!id) return;
+
+  missionRef = doc(db, "missions", id);
+
+  onSnapshot(missionRef, docSnap => {
+    if (!docSnap.exists()) {
+      titleEl.textContent = "MISSION UNKNOWN";
+      descEl.textContent = "";
+      statusEl.textContent = "Status: pending";
+      return;
+    }
+
+    const data = docSnap.data();
+    titleEl.textContent = data.title;
+    descEl.textContent = data.description;
+    statusEl.textContent = `Mission status: ${data.status ? data.status.toUpperCase() : "PENDING"}`;
+  });
+}
+
+/* Accept / Reject */
 acceptBtn.addEventListener("click", async () => {
-  if (!currentUser) return;
+  if (!currentUser || !missionRef) return;
   await setDoc(missionRef, {
     status: "accepted",
     user: currentUser,
@@ -69,7 +98,7 @@ acceptBtn.addEventListener("click", async () => {
 });
 
 rejectBtn.addEventListener("click", async () => {
-  if (!currentUser) return;
+  if (!currentUser || !missionRef) return;
   await setDoc(missionRef, {
     status: "rejected",
     user: currentUser,
