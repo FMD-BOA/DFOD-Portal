@@ -185,3 +185,66 @@ button {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
+
+.single-mission {
+  border: 1px solid #ccc;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.single-mission h3 {
+  margin: 0 0 8px 0;
+  font-family: serif;
+  text-align: center;
+}
+
+.single-mission p {
+  margin: 4px 0;
+  text-align: center;
+}
+
+.single-mission .status-accepted {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.single-mission .status-rejected {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Buttons Container */
+.single-mission .buttons-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.single-mission button {
+  padding: 8px 16px;
+  font-family: serif;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  color: white;
+  border-radius: 4px;
+}
+
+.single-mission button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.single-mission .accept-btn {
+  background-color: #28a745; /* grün */
+}
+
+.single-mission .reject-btn {
+  background-color: #dc3545; /* rot */
+}
