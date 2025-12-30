@@ -255,22 +255,25 @@ button {
   margin-bottom: 20px;
 }
 
-/* Buttons row: split left/right */
 .buttons-row {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  flex-wrap: nowrap; /* ← IMPORTANT */
 }
 
 /* Accept / Reject stay together */
 .decision-buttons {
   display: flex;
   gap: 6px;
+  flex-shrink: 0;
 }
 
-/* Upload pushed to the right */
+/* Upload pushed to the far right */
 .upload-area {
   margin-left: auto;
+  flex-shrink: 0;
 }
 
 .upload-btn:disabled {
