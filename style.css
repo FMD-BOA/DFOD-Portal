@@ -143,15 +143,15 @@ button {
 }
 
 /* Mission Box */
-.mission-box {
-  width: 90%;
-  max-width: 600px;
+.chat-box {
+  width: 100%;
+  max-width: 800px;
   margin: 20px auto;
-  padding: 20px;
-  background: #f5f5f5;
+  padding: 10px;
+  background: white;
   text-align: center;
-  border-radius: 6px;
-  margin-top: 12px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 /* Einzelne Mission als Zeile */
