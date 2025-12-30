@@ -4,7 +4,8 @@ import {
   collection,
   onSnapshot,
   doc,
-  updateDoc
+  updateDoc,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -120,7 +121,8 @@ onSnapshot(assignmentsCol, (snapshot) => {
     /* ---------- Accept / Reject ---------- */
     container.querySelector(".accept-btn").onclick = async () => {
       await updateDoc(doc(db, "assignments", assignmentId), {
-        status: "In Progress",
+        status: "Accepted",
+        "acceptance-date": serverTimestamp(),
       });
     };
 
