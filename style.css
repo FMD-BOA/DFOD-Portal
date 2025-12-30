@@ -80,11 +80,13 @@ button {
 /* Top banner */
 #top-banner {
   top: 0;
+  bottom: auto; /* IMPORTANT */
 }
 
 /* Bottom banner */
 #bottom-banner {
   bottom: 0;
+  top: auto;
 }
 
 /* Top Actions (Logout etc.) */
