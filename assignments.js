@@ -12,12 +12,6 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import {
-  getStorage,
-  ref as storageRef,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 /* Firebase Config */
 const firebaseConfig = {
@@ -29,7 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app);
 
 /* DOM */
 const missionsContainer = document.getElementById("missions-container");
@@ -56,7 +49,7 @@ logoutBtn.addEventListener("click", async () => {
 
 /* Zurück zum Chat */
 chatBtn.addEventListener("click", () => {
-  window.location.href = "chat.html";
+  window.location.href = "assignments.html";
 });
 
 /* Missionen laden */
@@ -94,19 +87,16 @@ function loadMissions() {
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
-      // Upload-Button sichtbar erzeugen
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
-      uploadBtn.style.display = "inline-block"; // sicherstellen, dass er sichtbar ist
-      uploadBtn.style.marginLeft = "8px"; // Abstand zu den anderen Buttons
+      uploadBtn.style.marginLeft = "8px";
 
       const fileInput = document.createElement("input");
       fileInput.type = "file";
-      fileInput.accept = ".txt,.pdf";
+      fileInput.accept = ".txt";
       fileInput.style.display = "none";
 
-      // Logik der Buttons
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
@@ -117,14 +107,17 @@ function loadMissions() {
         uploadBtn.disabled = true;
       }
 
+      // Upload-Logik für .txt-Dateien direkt in Firestore
       uploadBtn.addEventListener("click", () => fileInput.click());
       fileInput.addEventListener("change", async (e) => {
         if (!e.target.files.length) return;
         const file = e.target.files[0];
-        const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-        await setDoc(responseRef, { fileUrl: url }, { merge: true });
+        if (file.type !== "text/plain") {
+          alert("Nur .txt-Dateien erlaubt!");
+          return;
+        }
+        const text = await file.text();
+        await setDoc(responseRef, { fileContent: text, fileName: file.name }, { merge: true });
         alert(`File uploaded: ${file.name}`);
       });
 
@@ -148,5 +141,5 @@ async function updateMissionStatus(missionId, status) {
     timestamp: Date.now()
   });
 
-  loadMissions(); // Buttons aktualisieren
+  loadMissions();
 }
