@@ -120,7 +120,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
     /* ---------- Accept / Reject ---------- */
     container.querySelector(".accept-btn").onclick = async () => {
       await updateDoc(doc(db, "assignments", assignmentId), {
-        status: "Accepted",
+        status: "In Progress",
       });
     };
 
