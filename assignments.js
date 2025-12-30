@@ -1,17 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  onSnapshot,
-  setDoc,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 /* Firebase Config */
 const firebaseConfig = {
@@ -19,10 +9,10 @@ const firebaseConfig = {
   authDomain: "fmd-dfod-portal-ca1da.firebaseapp.com",
   projectId: "fmd-dfod-portal-ca1da",
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 /* DOM */
 const missionsContainer = document.getElementById("missions-container");
@@ -33,9 +23,8 @@ let currentUser = null;
 
 /* Auth Check */
 onAuthStateChanged(auth, user => {
-  if (!user) {
-    window.location.href = "index.html";
-  } else {
+  if (!user) window.location.href = "index.html";
+  else {
     currentUser = user;
     loadMissions();
   }
@@ -47,12 +36,12 @@ logoutBtn.addEventListener("click", async () => {
   window.location.href = "index.html";
 });
 
-/* Zurück zum Chat */
+/* Chat Button */
 chatBtn.addEventListener("click", () => {
   window.location.href = "chat.html";
 });
 
-/* Missionen laden */
+/* Missions laden */
 function loadMissions() {
   const missionsCol = collection(db, "missions");
 
@@ -71,9 +60,11 @@ function loadMissions() {
       missionEl.className = "single-mission";
 
       missionEl.innerHTML = `
-        <h3>${data.title}</h3>
-        <p>${data.description}</p>
-        <p class="status">Status: ${response ? response.status.toUpperCase() : "PENDING"}</p>
+        <div class="mission-info">
+          <h3>${data.title}</h3>
+          <p>${data.description}</p>
+          <p class="status">${response ? response.status.toUpperCase() : "PENDING"}</p>
+        </div>
       `;
 
       const buttonsRow = document.createElement("div");
@@ -87,7 +78,6 @@ function loadMissions() {
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
-      // Upload-Button & Input
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
@@ -97,34 +87,39 @@ function loadMissions() {
       fileInput.accept = ".txt,.pdf";
       fileInput.style.display = "none";
 
-      // Buttons initialisieren
+      // Buttons aktivieren/deaktivieren
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
         uploadBtn.disabled = response.status !== "accepted";
       } else {
-        acceptBtn.onclick = () => updateMissionStatus(missionId, "accepted");
-        rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
+        acceptBtn.onclick = async () => {
+          await updateMissionStatus(missionId, "accepted");
+          uploadBtn.disabled = false;
+          missionEl.querySelector(".status").textContent = "ACCEPTED";
+          acceptBtn.disabled = true;
+          rejectBtn.disabled = true;
+        };
+        rejectBtn.onclick = async () => {
+          await updateMissionStatus(missionId, "rejected");
+          uploadBtn.disabled = true;
+          missionEl.querySelector(".status").textContent = "REJECTED";
+          acceptBtn.disabled = true;
+          rejectBtn.disabled = true;
+        };
         uploadBtn.disabled = true;
       }
 
-      // Upload-Button Base64-Logik
+      // Upload Logic
       uploadBtn.addEventListener("click", () => fileInput.click());
-      fileInput.addEventListener("change", async (e) => {
+      fileInput.addEventListener("change", async e => {
         if (!e.target.files.length) return;
         const file = e.target.files[0];
-
-        const reader = new FileReader();
-        reader.onload = async () => {
-          const base64String = reader.result.split(',')[1]; // nur Daten, ohne prefix
-          await setDoc(responseRef, { uploadedFile: {
-            name: file.name,
-            type: file.type,
-            content: base64String
-          }}, { merge: true });
-          alert(`File uploaded: ${file.name}`);
-        };
-        reader.readAsDataURL(file);
+        const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        await setDoc(responseRef, { fileUrl: url }, { merge: true });
+        alert(`File uploaded: ${file.name}`);
       });
 
       buttonsRow.appendChild(acceptBtn);
@@ -141,12 +136,9 @@ function loadMissions() {
 /* Status speichern */
 async function updateMissionStatus(missionId, status) {
   const ref = doc(db, "missions", missionId, "responses", currentUser.uid);
-
   await setDoc(ref, {
     status,
     user: currentUser.email,
     timestamp: Date.now()
   }, { merge: true });
-
-  loadMissions();
 }
