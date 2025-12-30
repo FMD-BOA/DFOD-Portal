@@ -116,6 +116,7 @@ button {
   white-space: pre-wrap;
   margin-bottom: 6px;
   font-family: monospace;
+  text-align: left;
 }
 
 /* Input Row */
