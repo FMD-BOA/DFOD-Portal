@@ -446,3 +446,26 @@ button {
 .upload-input::file-selector-button:hover {
   background-color: #0056b3;
 }
+
+.upload-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: serif;
+  display: inline-block;
+}
+
+.upload-btn:hover {
+  background-color: #0056b3;
+}
+
+.upload-btn input {
+  display: none;
+}
+
+.upload-btn.upload-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
