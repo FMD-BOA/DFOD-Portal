@@ -75,20 +75,40 @@ onSnapshot(assignmentsCol, (snapshot) => {
           Status: <strong>${assignment.status || "Pending"}</strong>
         </div>
 
-        <div class="assignment-deadline">
-          Deadline: ${
-            assignment.deadline
-              ? assignment.deadline
-                  .toDate()
-                  .toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "short",
-                    year: "numeric",
-                  })
-                  .toUpperCase()
-              : "N/A"
+        <div class="assignment-dates">
+          <span class="deadline">
+            Deadline: ${
+              assignment.deadline
+                ? assignment.deadline
+                    .toDate()
+                    .toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "short",
+                      year: "numeric",
+                    })
+                    .toUpperCase()
+                : "N/A"
+            }
+          </span>
+        
+          ${
+            assignment["acceptance-date"]
+              ? `<span class="acceptance-date">
+                   | Accepted: ${assignment["acceptance-date"]
+                     .toDate()
+                     .toLocaleDateString("en-GB", {
+                       day: "2-digit",
+                       month: "short",
+                       year: "numeric",
+                     })
+                     .toUpperCase()}
+                 </span>`
+              : assignment.status === "Rejected"
+              ? `<span class="rejected-date"> | Rejected</span>`
+              : ``
           }
         </div>
+
 
         <div class="buttons-row">
           <div class="decision-buttons">
