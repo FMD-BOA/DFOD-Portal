@@ -80,7 +80,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
           ${
             assignment["acceptance-date"]
               ? `<div class="acceptance-date">
-                   ACCEPTED: ${assignment["acceptance-date"]
+                   Accepted: ${assignment["acceptance-date"]
                      .toDate()
                      .toLocaleDateString("en-GB", {
                        day: "2-digit",
@@ -95,7 +95,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
           }
         
           <div class="assignment-deadline">
-            DEADLINE: ${
+            Deadline: ${
               assignment.deadline
                 ? assignment.deadline
                     .toDate()
