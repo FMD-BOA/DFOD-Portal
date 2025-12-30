@@ -391,6 +391,7 @@ button {
   align-items: center;
   gap: 30px;
   padding: 8px 0;
+  margin-bottom: 8px;
 }
 
 /* ID block */
