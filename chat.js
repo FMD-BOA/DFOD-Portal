@@ -1,17 +1,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import {
-  getFirestore,
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy
+  getFirestore, collection, addDoc, onSnapshot, query, orderBy
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import {
-  getAuth,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 /* Firebase Config */
 const firebaseConfig = {
@@ -31,6 +22,7 @@ const msgIn   = document.getElementById("msg");
 const sendBtn = document.getElementById("send-btn");
 const missionBtn = document.getElementById("mission-btn");
 const logoutBtn = document.getElementById("logout-btn");
+const chatBtn = document.getElementById("chat-btn");
 
 /* Aktueller User */
 let currentUser = null;
@@ -38,10 +30,9 @@ let currentUser = null;
 /* Auth-Check */
 onAuthStateChanged(auth, user => {
   if (user) {
-    currentUser = user.email.split("@")[0]; // nur Username
+    currentUser = user.email.split("@")[0];
     chatDiv.style.display = "block";
 
-    // Firestore Listener starten
     onSnapshot(
       query(collection(db, "messages"), orderBy("time")),
       snap => {
@@ -55,11 +46,10 @@ onAuthStateChanged(auth, user => {
         logDiv.scrollTop = logDiv.scrollHeight;
       }
     );
-
   } else {
     currentUser = null;
     chatDiv.style.display = "none";
-    window.location.href = "index.html"; // zurück zum Login, falls nicht angemeldet
+    window.location.href = "index.html";
   }
 });
 
@@ -68,6 +58,7 @@ logoutBtn.addEventListener("click", async () => {
   try {
     await signOut(auth);
     currentUser = null;
+    window.location.href = "index.html";
   } catch (err) {
     console.error("Logout failed:", err);
   }
@@ -90,6 +81,11 @@ sendBtn.addEventListener("click", async () => {
 });
 
 /* Mission Portal */
-missionBtn.addEventListener("click", () => {
+missionBtn?.addEventListener("click", () => {
   window.location.href = "assignments.html";
+});
+
+/* Optional: Chat Button (falls auf Assignments-Seite) */
+chatBtn?.addEventListener("click", () => {
+  window.location.href = "chat.html";
 });
