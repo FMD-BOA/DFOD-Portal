@@ -70,21 +70,13 @@ function loadMissions() {
       const data = docSnap.data();
       const missionId = docSnap.id;
 
-      const responseRef = doc(
-        db,
-        "missions",
-        missionId,
-        "responses",
-        currentUser.uid
-      );
-
+      const responseRef = doc(db, "missions", missionId, "responses", currentUser.uid);
       const responseSnap = await getDoc(responseRef);
       const response = responseSnap.exists() ? responseSnap.data() : null;
 
       const missionEl = document.createElement("div");
       missionEl.className = "single-mission";
 
-      // Titel & Beschreibung
       missionEl.innerHTML = `
         <h3>${data.title}</h3>
         <p>${data.description}</p>
@@ -94,27 +86,27 @@ function loadMissions() {
       const buttonsRow = document.createElement("div");
       buttonsRow.className = "buttons-row";
 
-      // Accept Button
       const acceptBtn = document.createElement("button");
       acceptBtn.textContent = "Accept";
       acceptBtn.className = "accept-btn";
 
-      // Reject Button
       const rejectBtn = document.createElement("button");
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
-      // Upload Button & hidden input
+      // Upload-Button sichtbar erzeugen
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
+      uploadBtn.style.display = "inline-block"; // sicherstellen, dass er sichtbar ist
+      uploadBtn.style.marginLeft = "8px"; // Abstand zu den anderen Buttons
 
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = ".txt,.pdf";
       fileInput.style.display = "none";
 
-      // Buttons aktivieren/deaktivieren
+      // Logik der Buttons
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
@@ -125,7 +117,6 @@ function loadMissions() {
         uploadBtn.disabled = true;
       }
 
-      // Upload-Button Logik
       uploadBtn.addEventListener("click", () => fileInput.click());
       fileInput.addEventListener("change", async (e) => {
         if (!e.target.files.length) return;
@@ -137,30 +128,19 @@ function loadMissions() {
         alert(`File uploaded: ${file.name}`);
       });
 
-      // Buttons zum Row hinzufügen
       buttonsRow.appendChild(acceptBtn);
       buttonsRow.appendChild(rejectBtn);
       buttonsRow.appendChild(uploadBtn);
       buttonsRow.appendChild(fileInput);
 
-      // Row zum Mission Element
       missionEl.appendChild(buttonsRow);
-
-      // Mission ins Container
       missionsContainer.appendChild(missionEl);
     }
   });
 }
 
-/* Status speichern (pro User, irreversibel) */
 async function updateMissionStatus(missionId, status) {
-  const ref = doc(
-    db,
-    "missions",
-    missionId,
-    "responses",
-    currentUser.uid
-  );
+  const ref = doc(db, "missions", missionId, "responses", currentUser.uid);
 
   await setDoc(ref, {
     status,
@@ -168,6 +148,5 @@ async function updateMissionStatus(missionId, status) {
     timestamp: Date.now()
   });
 
-  // Nach Statusänderung den Upload-Button aktivieren
-  loadMissions();
+  loadMissions(); // Buttons aktualisieren
 }
