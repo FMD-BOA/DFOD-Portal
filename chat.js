@@ -91,5 +91,5 @@ sendBtn.addEventListener("click", async () => {
 
 /* Mission Portal */
 missionBtn.addEventListener("click", () => {
-  window.location.href = "mission.html";
+  window.location.href = "assignments.html";
 });
