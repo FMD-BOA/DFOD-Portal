@@ -383,7 +383,7 @@ button {
 .assignment-row {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 30px;
   padding: 8px 0;
 }
 
@@ -400,6 +400,7 @@ button {
   font-size: 1.15em;
   font-weight: normal;
   flex: 1;
+  text-align: center;
 }
 
 /* Make ONLY the title text larger */
