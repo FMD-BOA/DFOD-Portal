@@ -9,44 +9,47 @@ const firebaseConfig = {
   authDomain: "fmd-dfod-portal-ca1da.firebaseapp.com",
   projectId: "fmd-dfod-portal-ca1da",
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
-/* DOM */
-const missionsContainer = document.getElementById("missions-container");
-const chatBtn = document.getElementById("chat-btn");
-const logoutBtn = document.getElementById("logout-btn");
-
 let currentUser = null;
 
 /* Auth Check */
 onAuthStateChanged(auth, user => {
-  if (!user) window.location.href = "index.html";
-  else {
+  if (!user) {
+    window.location.href = "index.html";
+  } else {
     currentUser = user;
-    loadMissions();
+    initPage();
   }
 });
 
-/* Logout */
-logoutBtn.addEventListener("click", async () => {
-  await signOut(auth);
-  window.location.href = "index.html";
-});
+function initPage() {
+  const missionsContainer = document.getElementById("missions-container");
+  const chatBtn = document.getElementById("chat-btn");
+  const logoutBtn = document.getElementById("logout-btn");
 
-/* Chat Button */
-chatBtn.addEventListener("click", () => {
-  window.location.href = "chat.html";
-});
+  // EventListener nach Auth
+  logoutBtn.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });
 
-/* Missions laden */
-function loadMissions() {
+  chatBtn.addEventListener("click", () => {
+    window.location.href = "chat.html";
+  });
+
+  loadMissions(missionsContainer);
+}
+
+async function loadMissions(container) {
   const missionsCol = collection(db, "missions");
 
   onSnapshot(missionsCol, async snapshot => {
-    missionsContainer.innerHTML = "";
+    container.innerHTML = "";
 
     for (const docSnap of snapshot.docs) {
       const data = docSnap.data();
@@ -87,7 +90,6 @@ function loadMissions() {
       fileInput.accept = ".txt,.pdf";
       fileInput.style.display = "none";
 
-      // Buttons aktivieren/deaktivieren
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
@@ -110,7 +112,6 @@ function loadMissions() {
         uploadBtn.disabled = true;
       }
 
-      // Upload Logic
       uploadBtn.addEventListener("click", () => fileInput.click());
       fileInput.addEventListener("change", async e => {
         if (!e.target.files.length) return;
@@ -128,12 +129,11 @@ function loadMissions() {
       buttonsRow.appendChild(fileInput);
 
       missionEl.appendChild(buttonsRow);
-      missionsContainer.appendChild(missionEl);
+      container.appendChild(missionEl);
     }
   });
 }
 
-/* Status speichern */
 async function updateMissionStatus(missionId, status) {
   const ref = doc(db, "missions", missionId, "responses", currentUser.uid);
   await setDoc(ref, {
