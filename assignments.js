@@ -118,7 +118,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
         <div class="upload-area">
           <label class="upload-btn">
-            Upload documents
+            Upload Results
             <input type="file" class="upload-input" accept=".pdf,.txt" hidden>
           </label>
         </div>
