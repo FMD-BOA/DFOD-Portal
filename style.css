@@ -3,6 +3,7 @@ body {
   margin: 0;
   font-family: serif;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   padding: 20px;
   background: #f5f5f5;
