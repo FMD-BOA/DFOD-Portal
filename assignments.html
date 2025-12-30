@@ -7,30 +7,34 @@
 </head>
 <body>
 
+<!-- Top Secret Banner -->
 <div id="top-banner">SECRET</div>
 
+<!-- Top actions -->
 <div class="top-actions">
   <button id="logout-btn">Logout</button>
+  <button id="chat-btn">Chat</button>
 </div>
 
+<!-- Main mission container -->
 <div class="mission-box">
 
-  <img src="ministry-coat-of-arms-cropped.png" class="logo" alt="Portal Logo">
+  <img
+    src="ministry-coat-of-arms-cropped.png"
+    class="logo"
+    alt="Portal Logo"
+  >
 
-  <!-- Container für alle Missionen -->
-  <div id="missions-container">
-    <!-- JS erzeugt hier die Missionsblöcke -->
-  </div>
-
-  <!-- Chat-Button unten -->
-  <div class="mission-row">
-    <button id="chat-btn" class="mission-btn">DFOD Chat</button>
-  </div>
+  <!-- REQUIRED: assignments.js expects this ID -->
+  <div id="assignments-list"></div>
 
 </div>
 
+<!-- Bottom Secret Banner -->
 <div id="bottom-banner">SECRET</div>
 
-<script type="module" src="mission.js"></script>
+<!-- Correct script for assignments -->
+<script type="module" src="assignments.js"></script>
+
 </body>
 </html>
