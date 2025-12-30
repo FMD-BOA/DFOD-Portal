@@ -61,7 +61,7 @@ button {
   font-size: 0.9em;
 }
 
-/* Secret banners */
+/* Shared banner styles */
 #top-banner,
 #bottom-banner {
   background-color: red;
@@ -73,8 +73,18 @@ button {
   letter-spacing: 2px;
   padding: 6px 0;
   position: fixed;
-  bottom: 0;
   left: 0;
+  z-index: 9999;
+}
+
+/* Top banner */
+#top-banner {
+  top: 0;
+}
+
+/* Bottom banner */
+#bottom-banner {
+  bottom: 0;
 }
 
 /* Top Actions (Logout etc.) */
