@@ -84,7 +84,6 @@ function loadMissions() {
       const missionEl = document.createElement("div");
       missionEl.className = "single-mission";
 
-      // Zeilenlayout: Titel links, Buttons rechts
       missionEl.innerHTML = `
         <h3>${data.title}</h3>
         <p>${data.description}</p>
@@ -96,15 +95,17 @@ function loadMissions() {
       const buttonsRow = document.createElement("div");
       buttonsRow.className = "buttons-row";
 
+      // Accept Button
       const acceptBtn = document.createElement("button");
       acceptBtn.textContent = "Accept";
       acceptBtn.className = "accept-btn";
 
+      // Reject Button
       const rejectBtn = document.createElement("button");
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
-      // Upload Button
+      // Upload Button & hidden input
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
@@ -114,19 +115,7 @@ function loadMissions() {
       fileInput.accept = ".txt,.pdf";
       fileInput.style.display = "none";
 
-      uploadBtn.addEventListener("click", () => fileInput.click());
-
-      fileInput.addEventListener("change", async e => {
-        if (!e.target.files.length) return;
-        const file = e.target.files[0];
-        const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
-
-        await setDoc(responseRef, { fileUrl: url }, { merge: true });
-        alert(`File uploaded: ${file.name}`);
-      });
-
+      // Buttons aktivieren/deaktivieren
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
@@ -137,6 +126,19 @@ function loadMissions() {
         uploadBtn.disabled = true;
       }
 
+      // Upload-Button Logik
+      uploadBtn.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", async (e) => {
+        if (!e.target.files.length) return;
+        const file = e.target.files[0];
+        const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
+        await setDoc(responseRef, { fileUrl: url }, { merge: true });
+        alert(`File uploaded: ${file.name}`);
+      });
+
+      // Buttons hinzufügen
       buttonsRow.appendChild(acceptBtn);
       buttonsRow.appendChild(rejectBtn);
       buttonsRow.appendChild(uploadBtn);
@@ -164,6 +166,6 @@ async function updateMissionStatus(missionId, status) {
     timestamp: Date.now()
   });
 
-  // Reload missions to enable Upload button if accepted
+  // Nach Statusänderung den Upload-Button aktivieren
   loadMissions();
 }
