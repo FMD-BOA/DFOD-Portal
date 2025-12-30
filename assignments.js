@@ -105,11 +105,12 @@ function loadMissions() {
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
-      // Upload Button & hidden input
+      // Upload Button
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
 
+      // Hidden File Input
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = ".txt,.pdf";
@@ -121,7 +122,10 @@ function loadMissions() {
         rejectBtn.disabled = true;
         uploadBtn.disabled = response.status !== "accepted";
       } else {
-        acceptBtn.onclick = () => updateMissionStatus(missionId, "accepted");
+        acceptBtn.onclick = async () => {
+          await updateMissionStatus(missionId, "accepted");
+          uploadBtn.disabled = false; // jetzt aktivieren
+        };
         rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
         uploadBtn.disabled = true;
       }
@@ -150,7 +154,7 @@ function loadMissions() {
   });
 }
 
-/* Status speichern (pro User, irreversibel) */
+/* Status speichern */
 async function updateMissionStatus(missionId, status) {
   const ref = doc(
     db,
@@ -165,7 +169,4 @@ async function updateMissionStatus(missionId, status) {
     user: currentUser.email,
     timestamp: Date.now()
   });
-
-  // Nach Statusänderung den Upload-Button aktivieren
-  loadMissions();
 }
