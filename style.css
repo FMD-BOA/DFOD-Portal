@@ -11,7 +11,7 @@ body {
 /* LOGIN BOX */
 .login-box {
   width: 320px;
-  margin-top: 0 auto;
+  margin: 0 auto;
   padding: 20px;
   text-align: center;
 }
@@ -61,8 +61,9 @@ button {
   font-size: 0.9em;
 }
 
+/* Secret banners */
 #top-banner, #bottom-banner {
-  background: red;
+  background-color: red;
   color: white;
   font-weight: bold;
   text-align: center;
@@ -78,17 +79,31 @@ button {
   width: 100%;
 }
 
+/* Top Actions (Logout etc.) */
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+}
+
+/* CHAT BOX */
 .chat-box {
   width: 100%;
   max-width: 800px;
   margin: 20px auto;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
+/* Chat Log */
 #log div {
-  white-space: pre-wrap; /* für Mehrzeilen */
+  white-space: pre-wrap;
   margin-bottom: 6px;
 }
 
+/* Input Row */
 .input-row {
   display: flex;
   gap: 6px;
@@ -106,177 +121,15 @@ button {
   font-family: serif;
 }
 
-#mission-btn {
+/* Chat/Assignments Button */
+#mission-btn, #chat-btn {
   width: 100%;
   margin-top: 10px;
   font-family: serif;
   padding: 6px;
 }
 
-/* Mission Portal */
-#mission-container {
-  font-family: monospace;
-  font-size: 0.95em;
-  margin-bottom: 10px;
-}
-
-#mission-container p {
-  margin: 6px 0;
-}
-
-#mission-container .input-row {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-#mission-container button {
-  font-family: serif;
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-/* Back button */
-#back-btn {
-  width: 100%;
-  margin-top: 15px;
-  font-family: serif;
-  padding: 6px;
-}
-
-/* Logos und Titel bleiben identisch */
-.logo {
-  display: block;
-  width: 10vh;
-  margin: 0 auto 10px auto;
-}
-
-.title {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-/* Secret banners */
-#top-banner, #bottom-banner {
-  background: red;
-  color: white;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 6px 0;
-}
-
-#bottom-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-}
-
-/* Responsive Box */
-.chat-box {
-  width: 100%;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 10px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.single-mission {
-  border: 1px solid #ccc;
-  padding: 16px;
-  margin-bottom: 16px;
-  border-radius: 8px;
-  background: #f9f9f9;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.single-mission h3 {
-  margin: 0 0 8px 0;
-  font-family: serif;
-  text-align: center;
-}
-
-.single-mission p {
-  margin: 4px 0;
-  text-align: center;
-}
-
-.single-mission .status-accepted {
-  color: #28a745;
-  font-weight: bold;
-}
-
-.single-mission .status-rejected {
-  color: #dc3545;
-  font-weight: bold;
-}
-
-/* Buttons Container */
-.single-mission .buttons-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-.single-mission button {
-  padding: 8px 16px;
-  font-family: serif;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  color: white;
-  border-radius: 4px;
-}
-
-.single-mission button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.single-mission .accept-btn {
-  background-color: #28a745; /* grün */
-}
-
-.single-mission .reject-btn {
-  background-color: #dc3545; /* rot */
-}
-
-/* Container unter Top-Banner */
-.top-actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 10px 20px;
-}
-
-/* Mission Button unten */
-.mission-row {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px;
-}
-
-.mission-btn {
-  background-color: #1e4cff;
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  font-family: serif;
-  cursor: pointer;
-}
-
-.mission-btn:hover {
-  background-color: #1638c7;
-}
-
-/* Mission Container */
+/* Mission Box */
 .mission-box {
   width: 90%;
   max-width: 600px;
@@ -304,6 +157,21 @@ button {
   margin: 0;
   flex: 1;
   text-align: left;
+  font-family: serif;
+}
+
+/* Status Text */
+.single-mission p.status {
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+.single-mission .status-accepted {
+  color: #28a745;
+}
+
+.single-mission .status-rejected {
+  color: #dc3545;
 }
 
 /* Buttons rechts */
@@ -334,7 +202,7 @@ button {
   cursor: default;
 }
 
-/* Chat-Button */
+/* Chat-Button unten */
 #chat-btn {
   margin-top: 15px;
   background-color: #007bff;
@@ -342,6 +210,27 @@ button {
   border: none;
   padding: 6px 12px;
   cursor: pointer;
+  border-radius: 4px
+}
+
+/* Mission Button unten */
+.mission-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+}
+
+.mission-btn {
+  background-color: #1e4cff;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  font-family: serif;
+  cursor: pointer;
+}
+
+.mission-btn:hover {
+  background-color: #1638c7;
 }
 
 /* Logos */
@@ -350,12 +239,8 @@ button {
   margin-bottom: 15px;
 }
 
-/* Banner */
-#top-banner, #bottom-banner {
-  background-color: red;
-  color: white;
-  text-transform: uppercase;
-  font-weight: bold;
-  padding: 6px 0;
+/* Titel */
+.title {
   text-align: center;
+  margin-bottom: 20px;
 }
