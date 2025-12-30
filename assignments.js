@@ -81,11 +81,14 @@ onSnapshot(assignmentsCol, (snapshot) => {
         <div class="assignment-deadline">
           Deadline: ${
             assignment.deadline
-            assignment.deadline.toDate().toLocaleDateString("en-GB", {
-              day: "2-digit",
-              month: "short",
-              year: "numeric"
-            }).toUpperCase()
+              ? assignment.deadline
+                  .toDate()
+                  .toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })
+                  .toUpperCase()
               : "N/A"
           }
         </div>
