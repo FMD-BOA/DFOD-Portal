@@ -115,6 +115,7 @@ button {
 #log div {
   white-space: pre-wrap;
   margin-bottom: 6px;
+  font: monospace;
 }
 
 /* Input Row */
