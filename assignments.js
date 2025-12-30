@@ -28,8 +28,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 
 /* DOM */
 const missionsContainer = document.getElementById("missions-container");
@@ -84,6 +84,7 @@ function loadMissions() {
       const missionEl = document.createElement("div");
       missionEl.className = "single-mission";
 
+      // Zeilenlayout: Titel links, Buttons rechts
       missionEl.innerHTML = `
         <h3>${data.title}</h3>
         <p>${data.description}</p>
@@ -104,42 +105,42 @@ function loadMissions() {
       rejectBtn.className = "reject-btn";
 
       // Upload Button
-      const uploadInput = document.createElement("input");
-      uploadInput.type = "file";
-      uploadInput.accept = ".txt,.pdf";
-      uploadInput.style.marginLeft = "8px";
-      uploadInput.style.cursor = "pointer";
+      const uploadBtn = document.createElement("button");
+      uploadBtn.textContent = "Upload";
+      uploadBtn.className = "upload-btn";
 
-      if (response) {
-        acceptBtn.disabled = true;
-        rejectBtn.disabled = true;
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".txt,.pdf";
+      fileInput.style.display = "none";
 
-        // Upload nur aktiv, wenn akzeptiert
-        uploadInput.disabled = response.status !== "accepted";
-      } else {
-        acceptBtn.onclick = async () => {
-          await updateMissionStatus(missionId, "accepted");
-          uploadInput.disabled = false;
-        };
-        rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
-        uploadInput.disabled = true; // nicht erlaubt, solange nicht akzeptiert
-      }
+      uploadBtn.addEventListener("click", () => fileInput.click());
 
-      // Upload Event
-      uploadInput.addEventListener("change", async e => {
+      fileInput.addEventListener("change", async e => {
         if (!e.target.files.length) return;
         const file = e.target.files[0];
-        const storageReference = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
-        await uploadBytes(storageReference, file);
-        const url = await getDownloadURL(storageReference);
+        const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
 
         await setDoc(responseRef, { fileUrl: url }, { merge: true });
         alert(`File uploaded: ${file.name}`);
       });
 
+      if (response) {
+        acceptBtn.disabled = true;
+        rejectBtn.disabled = true;
+        uploadBtn.disabled = response.status !== "accepted";
+      } else {
+        acceptBtn.onclick = () => updateMissionStatus(missionId, "accepted");
+        rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
+        uploadBtn.disabled = true;
+      }
+
       buttonsRow.appendChild(acceptBtn);
       buttonsRow.appendChild(rejectBtn);
-      buttonsRow.appendChild(uploadInput);
+      buttonsRow.appendChild(uploadBtn);
+      buttonsRow.appendChild(fileInput);
 
       missionEl.appendChild(buttonsRow);
       missionsContainer.appendChild(missionEl);
@@ -161,5 +162,8 @@ async function updateMissionStatus(missionId, status) {
     status,
     user: currentUser.email,
     timestamp: Date.now()
-  }, { merge: true });
+  });
+
+  // Reload missions to enable Upload button if accepted
+  loadMissions();
 }
