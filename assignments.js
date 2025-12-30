@@ -106,8 +106,13 @@ onSnapshot(assignmentsCol, (snapshot) => {
       <div class="upload-status"></div>
     `;
 
-    /* ---------- Status colouring ---------- */
+    /* ---------- Elements ---------- */
+    const acceptBtn = container.querySelector(".accept-btn");
+    const rejectBtn = container.querySelector(".reject-btn");
+    const uploadInput = container.querySelector(".upload-input");
     const statusEl = container.querySelector(".assignment-status strong");
+
+    /* ---------- Status colouring ---------- */
     if (assignment.status === "Accepted") {
       statusEl.classList.add("status-accepted");
     } else if (assignment.status === "Rejected") {
@@ -115,14 +120,19 @@ onSnapshot(assignmentsCol, (snapshot) => {
     }
 
     /* ---------- Decision locking ---------- */
-    const acceptBtn = container.querySelector(".accept-btn");
-    const rejectBtn = container.querySelector(".reject-btn");
-
     if (assignment.status === "Accepted" || assignment.status === "Rejected") {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
       acceptBtn.classList.add("decision-locked");
       rejectBtn.classList.add("decision-locked");
+    }
+
+    /* ---------- Upload lock ---------- */
+    if (assignment.status === "Accepted") {
+      uploadInput.disabled = false;
+    } else {
+      uploadInput.disabled = true;
+      uploadInput.classList.add("upload-disabled");
     }
 
     /* ---------- Accept ---------- */
@@ -145,7 +155,9 @@ onSnapshot(assignmentsCol, (snapshot) => {
     };
 
     /* ---------- Upload ---------- */
-    container.querySelector(".upload-input").onchange = async (e) => {
+    uploadInput.onchange = async (e) => {
+      if (uploadInput.disabled) return;
+
       const file = e.target.files[0];
       if (!file) return;
 
