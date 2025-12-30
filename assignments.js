@@ -66,12 +66,12 @@ onSnapshot(assignmentsCol, (snapshot) => {
     container.innerHTML = `
       <div class="assignment-row">
     
-        <div class="assignment-id">
-          ID: ${assignment.ID || "—"}
-        </div>
-
         <div class="assignment-title">
           Assignment Name: <strong>${assignment.title}</strong>
+        </div>
+        
+        <div class="assignment-id">
+          ID: ${assignment.ID || "—"}
         </div>
 
         <div class="assignment-status">
