@@ -15,7 +15,7 @@ const auth = getAuth(app);
 function usernameToEmail(username) {
   const u = username.toLowerCase();
   if (u === "topazdawn") return "topazdawn@fmd.gov";
-  if (u === "dfod") return "dfod@fmd.gov";
+  if (u === "DFOD-support") return "dfod@fmd.gov";
   return null;
 }
 
