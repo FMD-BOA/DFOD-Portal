@@ -67,7 +67,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
       <div class="assignment-row">
     
         <div class="assignment-title">
-          Assignment Name: <strong>${assignment.title}</strong>
+          <strong>${assignment.title}</strong>
         </div>
         
         <div class="assignment-id">
