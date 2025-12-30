@@ -378,3 +378,48 @@ button {
     flex-direction: column;
   }
 }
+
+/* Row layout */
+.assignment-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 8px 0;
+}
+
+/* ID block */
+.assignment-id {
+  font-size: 1.2em;
+  font-weight: bold;
+  min-width: 90px;
+  letter-spacing: 1px;
+}
+
+/* Title block */
+.assignment-title {
+  font-size: 1.15em;
+  font-weight: normal;
+  flex: 1;
+}
+
+/* Make ONLY the title text larger */
+.assignment-title strong {
+  font-size: 1.2em;
+}
+
+/* Status & deadline smaller */
+.assignment-status,
+.assignment-deadline {
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* Status value emphasis */
+.assignment-status strong {
+  font-weight: bold;
+}
+
+/* Optional: subtle divider */
+.assignment-row:not(:last-child) {
+  border-bottom: 1px solid #e0e0e0;
+}
