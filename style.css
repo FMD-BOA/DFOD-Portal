@@ -430,3 +430,19 @@ button {
 .assignment-row:not(:last-child) {
   border-bottom: 1px solid #e0e0e0;
 }
+
+.upload-input::file-selector-button {
+  content: "Upload documents";
+  font-family: serif;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Hover */
+.upload-input::file-selector-button:hover {
+  background-color: #0056b3;
+}
