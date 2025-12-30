@@ -301,13 +301,6 @@ button {
   gap: 12px;
 }
 
-.assignment strong {
-  font-size: 1.1em;
-  text-align: left;
-  font-family: serif;
-  flex: 2;
-}
-
 /* Buttons nebeneinander */
 .assignment .buttons-row {
   display: flex;
