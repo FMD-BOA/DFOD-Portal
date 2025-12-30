@@ -62,19 +62,20 @@ button {
 }
 
 /* Secret banners */
-#top-banner,
-#bottom-banner {
-  background-color: red;
-  color: white;
+#top-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  font-weight: bold;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  padding: 6px 0;
+  z-index: 10;
+}
+
+#bottom-banner {
   position: fixed;
   bottom: 0;
   left: 0;
+  width: 100%;
+  z-index: 10;
 }
 
 /* Top Actions (Logout etc.) */
