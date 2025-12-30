@@ -255,19 +255,22 @@ button {
   margin-bottom: 20px;
 }
 
+/* Buttons row: split left/right */
 .buttons-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap; /* wichtige Änderung */
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.upload-btn {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    cursor: pointer;
-    border-radius: 4px;
+/* Accept / Reject stay together */
+.decision-buttons {
+  display: flex;
+  gap: 6px;
+}
+
+/* Upload pushed to the right */
+.upload-area {
+  margin-left: auto;
 }
 
 .upload-btn:disabled {
