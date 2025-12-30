@@ -19,6 +19,7 @@ import {
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
+/* Firebase Config */
 const firebaseConfig = {
   apiKey: "AIzaSyA4rFUf7-avxLsSuarrh1fZn8Pd91Q2oic",
   authDomain: "fmd-dfod-portal-ca1da.firebaseapp.com",
@@ -30,12 +31,14 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+/* DOM */
 const missionsContainer = document.getElementById("missions-container");
 const chatBtn = document.getElementById("chat-btn");
 const logoutBtn = document.getElementById("logout-btn");
 
 let currentUser = null;
 
+/* Auth Check */
 onAuthStateChanged(auth, user => {
   if (!user) {
     window.location.href = "index.html";
@@ -45,15 +48,18 @@ onAuthStateChanged(auth, user => {
   }
 });
 
+/* Logout */
 logoutBtn.addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "index.html";
 });
 
+/* Zurück zum Chat */
 chatBtn.addEventListener("click", () => {
   window.location.href = "chat.html";
 });
 
+/* Missionen laden */
 function loadMissions() {
   const missionsCol = collection(db, "missions");
 
@@ -64,70 +70,64 @@ function loadMissions() {
       const data = docSnap.data();
       const missionId = docSnap.id;
 
-      const responseRef = doc(db, "missions", missionId, "responses", currentUser.uid);
+      const responseRef = doc(
+        db,
+        "missions",
+        missionId,
+        "responses",
+        currentUser.uid
+      );
+
       const responseSnap = await getDoc(responseRef);
       const response = responseSnap.exists() ? responseSnap.data() : null;
 
       const missionEl = document.createElement("div");
       missionEl.className = "single-mission";
 
-      const title = document.createElement("h3");
-      title.textContent = data.title;
-      missionEl.appendChild(title);
+      // Titel & Beschreibung
+      missionEl.innerHTML = `
+        <h3>${data.title}</h3>
+        <p>${data.description}</p>
+        <p class="status">Status: ${response ? response.status.toUpperCase() : "PENDING"}</p>
+      `;
 
-      const desc = document.createElement("p");
-      desc.textContent = data.description;
-      missionEl.appendChild(desc);
-
-      const statusEl = document.createElement("p");
-      statusEl.className = "status";
-      statusEl.textContent = `Status: ${response ? response.status.toUpperCase() : "PENDING"}`;
-      missionEl.appendChild(statusEl);
-
-      // Buttons
       const buttonsRow = document.createElement("div");
       buttonsRow.className = "buttons-row";
 
+      // Accept Button
       const acceptBtn = document.createElement("button");
       acceptBtn.textContent = "Accept";
       acceptBtn.className = "accept-btn";
 
+      // Reject Button
       const rejectBtn = document.createElement("button");
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
 
+      // Upload Button & hidden input
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
-      uploadBtn.disabled = true;
 
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = ".txt,.pdf";
       fileInput.style.display = "none";
 
+      // Buttons aktivieren/deaktivieren
       if (response) {
         acceptBtn.disabled = true;
         rejectBtn.disabled = true;
-        if (response.status === "accepted") uploadBtn.disabled = false;
+        uploadBtn.disabled = response.status !== "accepted";
       } else {
-        acceptBtn.onclick = async () => {
-          await updateMissionStatus(missionId, "accepted");
-          uploadBtn.disabled = false; // Nur den Upload aktivieren
-          statusEl.textContent = "Status: ACCEPTED"; // Status sofort updaten
-          acceptBtn.disabled = true;
-          rejectBtn.disabled = true;
-        };
-        rejectBtn.onclick = async () => {
-          await updateMissionStatus(missionId, "rejected");
-          statusEl.textContent = "Status: REJECTED";
-          acceptBtn.disabled = true;
-          rejectBtn.disabled = true;
-        };
+        acceptBtn.onclick = () => updateMissionStatus(missionId, "accepted");
+        rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
+        uploadBtn.disabled = true;
       }
 
+      // Upload-Button Logik
       uploadBtn.addEventListener("click", () => fileInput.click());
-      fileInput.addEventListener("change", async e => {
+      fileInput.addEventListener("change", async (e) => {
         if (!e.target.files.length) return;
         const file = e.target.files[0];
         const fileRef = storageRef(storage, `mission_uploads/${missionId}/${currentUser.uid}/${file.name}`);
@@ -137,18 +137,37 @@ function loadMissions() {
         alert(`File uploaded: ${file.name}`);
       });
 
+      // Buttons zum Row hinzufügen
       buttonsRow.appendChild(acceptBtn);
       buttonsRow.appendChild(rejectBtn);
       buttonsRow.appendChild(uploadBtn);
       buttonsRow.appendChild(fileInput);
 
+      // Row zum Mission Element
       missionEl.appendChild(buttonsRow);
+
+      // Mission ins Container
       missionsContainer.appendChild(missionEl);
     }
   });
 }
 
+/* Status speichern (pro User, irreversibel) */
 async function updateMissionStatus(missionId, status) {
-  const ref = doc(db, "missions", missionId, "responses", currentUser.uid);
-  await setDoc(ref, { status, user: currentUser.email, timestamp: Date.now() });
+  const ref = doc(
+    db,
+    "missions",
+    missionId,
+    "responses",
+    currentUser.uid
+  );
+
+  await setDoc(ref, {
+    status,
+    user: currentUser.email,
+    timestamp: Date.now()
+  });
+
+  // Nach Statusänderung den Upload-Button aktivieren
+  loadMissions();
 }
