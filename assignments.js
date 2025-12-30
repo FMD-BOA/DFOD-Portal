@@ -35,12 +35,8 @@ const chatBtn = document.getElementById("chat-btn");
 /* ---------- Logout ---------- */
 if (logoutBtn) {
   logoutBtn.onclick = async () => {
-    try {
-      await signOut(auth);
-      window.location.href = "index.html";
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
+    await signOut(auth);
+    window.location.href = "index.html";
   };
 }
 
@@ -66,17 +62,17 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     container.innerHTML = `
       <div class="assignment-row">
-    
+
         <div class="assignment-title">
           <strong>${assignment.title}</strong>
         </div>
-        
+
         <div class="assignment-id">
           ID: ${assignment.ID || "—"}
         </div>
 
         <div class="assignment-status">
-          Status: <strong>${assignment.status}</strong>
+          Status: <strong>${assignment.status || "Pending"}</strong>
         </div>
 
         <div class="assignment-deadline">
@@ -93,13 +89,13 @@ onSnapshot(assignmentsCol, (snapshot) => {
               : "N/A"
           }
         </div>
-        
+
         <div class="buttons-row">
           <div class="decision-buttons">
             <button class="accept-btn">Accept</button>
             <button class="reject-btn">Reject</button>
           </div>
-        
+
           <div class="upload-area">
             <input type="file" class="upload-input" accept=".pdf,.txt">
           </div>
@@ -110,7 +106,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
       <div class="upload-status"></div>
     `;
 
-    /* ---------- Status coloring ---------- */
+    /* ---------- Status colouring ---------- */
     const statusEl = container.querySelector(".assignment-status strong");
     if (assignment.status === "Accepted") {
       statusEl.classList.add("status-accepted");
@@ -118,15 +114,31 @@ onSnapshot(assignmentsCol, (snapshot) => {
       statusEl.classList.add("status-rejected");
     }
 
-    /* ---------- Accept / Reject ---------- */
-    container.querySelector(".accept-btn").onclick = async () => {
+    /* ---------- Decision locking ---------- */
+    const acceptBtn = container.querySelector(".accept-btn");
+    const rejectBtn = container.querySelector(".reject-btn");
+
+    if (assignment.status === "Accepted" || assignment.status === "Rejected") {
+      acceptBtn.disabled = true;
+      rejectBtn.disabled = true;
+      acceptBtn.classList.add("decision-locked");
+      rejectBtn.classList.add("decision-locked");
+    }
+
+    /* ---------- Accept ---------- */
+    acceptBtn.onclick = async () => {
+      if (assignment.status) return;
+
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
     };
 
-    container.querySelector(".reject-btn").onclick = async () => {
+    /* ---------- Reject ---------- */
+    rejectBtn.onclick = async () => {
+      if (assignment.status) return;
+
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Rejected",
       });
