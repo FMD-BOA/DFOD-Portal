@@ -175,12 +175,6 @@ button {
   color: #dc3545;
 }
 
-/* Buttons rechts */
-.buttons-row {
-  display: flex;
-  gap: 6px;
-}
-
 .accept-btn {
   background-color: green;
   color: white;
@@ -248,6 +242,12 @@ button {
   margin-bottom: 20px;
 }
 
+.buttons-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap; /* wichtige Änderung */
+}
+
 .upload-btn {
     background-color: #007bff;
     color: white;
@@ -256,6 +256,7 @@ button {
     cursor: pointer;
     border-radius: 4px;
 }
+
 .upload-btn:disabled {
     opacity: 0.5;
     cursor: default;
