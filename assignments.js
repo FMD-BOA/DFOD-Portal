@@ -81,26 +81,34 @@ function loadMissions() {
       const responseSnap = await getDoc(responseRef);
       const response = responseSnap.exists() ? responseSnap.data() : null;
 
+      // Mission Container
       const missionEl = document.createElement("div");
       missionEl.className = "single-mission";
 
-      missionEl.innerHTML = `
-        <h3>${data.title}</h3>
-        <p>${data.description}</p>
-        <p class="status">
-          Status: ${response ? response.status.toUpperCase() : "PENDING"}
-        </p>
-      `;
+      // Titel & Beschreibung
+      const title = document.createElement("h3");
+      title.textContent = data.title;
+      missionEl.appendChild(title);
 
+      const desc = document.createElement("p");
+      desc.textContent = data.description;
+      missionEl.appendChild(desc);
+
+      const statusEl = document.createElement("p");
+      statusEl.className = "status";
+      statusEl.textContent = `Status: ${response ? response.status.toUpperCase() : "PENDING"}`;
+      missionEl.appendChild(statusEl);
+
+      // Buttons Row
       const buttonsRow = document.createElement("div");
       buttonsRow.className = "buttons-row";
 
-      // Accept Button
+      // Accept
       const acceptBtn = document.createElement("button");
       acceptBtn.textContent = "Accept";
       acceptBtn.className = "accept-btn";
 
-      // Reject Button
+      // Reject
       const rejectBtn = document.createElement("button");
       rejectBtn.textContent = "Reject";
       rejectBtn.className = "reject-btn";
@@ -109,8 +117,8 @@ function loadMissions() {
       const uploadBtn = document.createElement("button");
       uploadBtn.textContent = "Upload";
       uploadBtn.className = "upload-btn";
+      uploadBtn.disabled = true;
 
-      // Hidden File Input
       const fileInput = document.createElement("input");
       fileInput.type = "file";
       fileInput.accept = ".txt,.pdf";
@@ -124,13 +132,12 @@ function loadMissions() {
       } else {
         acceptBtn.onclick = async () => {
           await updateMissionStatus(missionId, "accepted");
-          uploadBtn.disabled = false; // jetzt aktivieren
+          uploadBtn.disabled = false;
         };
         rejectBtn.onclick = () => updateMissionStatus(missionId, "rejected");
-        uploadBtn.disabled = true;
       }
 
-      // Upload-Button Logik
+      // Upload Logic
       uploadBtn.addEventListener("click", () => fileInput.click());
       fileInput.addEventListener("change", async (e) => {
         if (!e.target.files.length) return;
@@ -142,19 +149,19 @@ function loadMissions() {
         alert(`File uploaded: ${file.name}`);
       });
 
-      // Buttons hinzufügen
+      // Append Buttons
       buttonsRow.appendChild(acceptBtn);
       buttonsRow.appendChild(rejectBtn);
       buttonsRow.appendChild(uploadBtn);
       buttonsRow.appendChild(fileInput);
-
       missionEl.appendChild(buttonsRow);
+
       missionsContainer.appendChild(missionEl);
     }
   });
 }
 
-/* Status speichern */
+/* Status speichern (pro User, irreversibel) */
 async function updateMissionStatus(missionId, status) {
   const ref = doc(
     db,
@@ -169,4 +176,7 @@ async function updateMissionStatus(missionId, status) {
     user: currentUser.email,
     timestamp: Date.now()
   });
+
+  // Reload Missionen damit Upload sichtbar wird
+  loadMissions();
 }
