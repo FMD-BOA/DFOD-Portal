@@ -84,7 +84,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
         </div>
 
         <div class="assignment-id">
-          ${assignment.ID || "—"}
+          Assignment ID: ${assignment.ID || "—"}
         </div>
 
         <div class="assignment-status">
