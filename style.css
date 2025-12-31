@@ -173,11 +173,18 @@ button {
 }
 
 .single-mission .status-accepted {
-  color: #28a745;
+  color: #218838;
+  font-weight: bold;
+}
+
+.status-pending {
+  color: #f0ad4e;
+  font-weight: bold;
 }
 
 .single-mission .status-rejected {
   color: #dc3545;
+  font-weight: bold;
 }
 
 .accept-btn {
