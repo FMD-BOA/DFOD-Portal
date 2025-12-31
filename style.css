@@ -406,6 +406,13 @@ button {
   text-align: center;
 }
 
+.assignment-dates {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.8em; /* makes BOTH dates smaller & equal */
+}
+
 /* Make ONLY the title text larger */
 .assignment-title strong {
   font-size: 1.2em;
