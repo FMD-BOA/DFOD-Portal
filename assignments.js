@@ -58,25 +58,19 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const assignmentId = docSnap.id;
 
     const acceptedDate = assignment["acceptance-date"]
-      ? assignment["acceptance-date"]
-          .toDate()
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })
-          .toUpperCase()
+      ? assignment["acceptance-date"].toDate().toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }).toUpperCase()
       : null;
 
     const deadlineDate = assignment.deadline
-      ? assignment.deadline
-          .toDate()
-          .toLocaleDateString("en-GB", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })
-          .toUpperCase()
+      ? assignment.deadline.toDate().toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }).toUpperCase()
       : "N/A";
 
     const container = document.createElement("div");
@@ -85,10 +79,12 @@ onSnapshot(assignmentsCol, (snapshot) => {
     container.innerHTML = `
       <div class="assignment-row">
 
-        <div class="assignment-title">${assignment.title}</div>
-
         <div class="assignment-id">
-          ID: ${assignment.ID || "—"}
+          ${assignment.ID || "—"}
+        </div>
+
+        <div class="assignment-title">
+          <strong>${assignment.title}</strong>
         </div>
 
         <div class="assignment-status">
@@ -98,15 +94,16 @@ onSnapshot(assignmentsCol, (snapshot) => {
         <div class="assignment-dates">
           ${
             acceptedDate
-              ? `<div class="acceptance-date">ACCEPTED: ${acceptedDate}</div>`
+              ? `<div>ACCEPTED: ${acceptedDate}</div>`
               : assignment.status === "Rejected"
-              ? `<div class="rejected-date">REJECTED</div>`
+              ? `<div>REJECTED</div>`
               : ``
           }
+          <div>DEADLINE: ${deadlineDate}</div>
+        </div>
 
-          <div class="assignment-deadline">
-            DEADLINE: ${deadlineDate}
-          </div>
+        <div class="assignment-file-status">
+          ${assignment.fileUrl ? "File uploaded" : "No file uploaded"}
         </div>
 
         <div class="buttons-row">
@@ -115,23 +112,12 @@ onSnapshot(assignmentsCol, (snapshot) => {
             <button class="reject-btn">Reject</button>
           </div>
 
-          <div class="upload-area">
-            <label class="upload-btn">
-              Upload Results
-              <input type="file" class="upload-input" accept=".pdf,.txt" hidden>
-            </label>
-          </div>
+          <label class="upload-btn">
+            Upload Results
+            <input type="file" class="upload-input" accept=".pdf,.txt">
+          </label>
         </div>
 
-      </div>
-
-      <div class="upload-status">
-        ${
-          assignment.fileUrl
-            ? `<a href="${assignment.fileUrl}" target="_blank" class="file-link"></a>
-               <div class="upload-success">File uploaded successfully.</div>`
-            : ""
-        }
       </div>
     `;
 
@@ -139,7 +125,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const acceptBtn = container.querySelector(".accept-btn");
     const rejectBtn = container.querySelector(".reject-btn");
     const uploadInput = container.querySelector(".upload-input");
-    const uploadStatus = container.querySelector(".upload-status");
+    const fileStatusEl = container.querySelector(".assignment-file-status");
     const statusEl = container.querySelector(".assignment-status strong");
 
     /* ---------- Status colouring ---------- */
@@ -153,17 +139,10 @@ onSnapshot(assignmentsCol, (snapshot) => {
     if (assignment.status === "Accepted" || assignment.status === "Rejected") {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
-      acceptBtn.classList.add("decision-locked");
-      rejectBtn.classList.add("decision-locked");
     }
 
     /* ---------- Upload lock ---------- */
-    if (assignment.status === "Accepted") {
-      uploadInput.disabled = false;
-    } else {
-      uploadInput.disabled = true;
-      uploadInput.classList.add("upload-disabled");
-    }
+    uploadInput.disabled = assignment.status !== "Accepted";
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
@@ -186,19 +165,17 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Upload ---------- */
     uploadInput.onchange = async (e) => {
-      if (uploadInput.disabled) return;
-
       const file = e.target.files[0];
       if (!file) return;
 
-      uploadStatus.textContent = "Uploading…";
+      fileStatusEl.textContent = "Uploading…";
 
       const { error } = await supabase.storage
         .from("uploads")
         .upload(`${assignmentId}/${file.name}`, file, { upsert: true });
 
       if (error) {
-        uploadStatus.textContent = "Upload failed: " + error.message;
+        fileStatusEl.textContent = "Upload failed";
         return;
       }
 
@@ -209,6 +186,9 @@ onSnapshot(assignmentsCol, (snapshot) => {
       await updateDoc(doc(db, "assignments", assignmentId), {
         fileUrl: data.publicUrl,
       });
+
+      fileStatusEl.textContent = "File uploaded";
+      fileStatusEl.classList.add("uploaded");
     };
 
     assignmentsList.appendChild(container);
