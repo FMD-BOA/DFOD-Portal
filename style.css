@@ -280,7 +280,7 @@ button {
 .assignment {
   background-color: #fff;
   border-radius: 6px;
-  padding: 12px 15px;
+  padding: 12px 0;
   margin-bottom: 15px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
   display: flex;
@@ -386,6 +386,7 @@ button {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+  padding: 0 15px;
   box-sizing: border-box;
 }
 
