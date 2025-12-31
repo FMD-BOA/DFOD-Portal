@@ -126,9 +126,12 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const fileStatus = row.querySelector(".file-status");
 
     /* ---------- Lock decisions ---------- */
-    if (a.status) {
+    if (a.status === "Accepted" || a.status === "Rejected") {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
+    } else {
+      acceptBtn.disabled = false;
+      rejectBtn.disabled = false;
     }
 
     /* ---------- Upload lock ---------- */
@@ -139,6 +142,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       uploadInput.disabled = true;
       uploadLabel.classList.add("upload-disabled");
     }
+
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
