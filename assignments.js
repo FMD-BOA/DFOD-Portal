@@ -84,7 +84,15 @@ onSnapshot(assignmentsCol, (snapshot) => {
         </div>
 
         <div class="assignment-id">
-          Assignment ID: ${assignment.ID || "—"}
+          ID: ${assignment.ID || "—"}
+        </div>
+
+        <div class="assignment-type">
+          Type: ${assignment.type}
+        </div>
+
+        <div class="assignment-type">
+          Responsible Entity: ${assignment.department}
         </div>
 
         <div class="assignment-status">
