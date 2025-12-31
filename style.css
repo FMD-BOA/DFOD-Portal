@@ -422,6 +422,7 @@ button {
   padding: 10px 12px;
   text-align: center;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
 /* ROW divider instead of cell divider */
@@ -472,11 +473,12 @@ button {
   font-weight: bold;
 }
 
-/* Actions column */
 .assignments-table .actions {
   display: flex;
   justify-content: center;
+  align-items: center; /* ← THIS is the key */
   gap: 6px;
+  height: 100%;
 }
 
 /* Upload disabled */
