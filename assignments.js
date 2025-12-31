@@ -63,8 +63,8 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
         <th>Department</th>
         <th>Status</th>
         <th>Dates</th>
-        <th>File</th>
         <th>Actions</th>
+        <th>File Status</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -111,9 +111,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
         DEADLINE: ${deadlineDate}
       </td>
 
-      <td class="file-status ${a.fileUrl ? "uploaded" : ""}">
-        ${a.fileUrl ? "File uploaded" : "No file uploaded"}
-      </td>
+
 
       <td class="actions">
         <button class="accept-btn">Accept</button>
@@ -122,6 +120,10 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
           Upload
           <input type="file" class="upload-input" accept=".pdf,.txt">
         </label>
+      </td>
+
+      <td class="file-status ${a.fileUrl ? "uploaded" : ""}">
+        ${a.fileUrl ? "File uploaded" : "No file uploaded"}
       </td>
     `;
 
