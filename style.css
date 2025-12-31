@@ -411,13 +411,6 @@ button {
   font-size: 1.2em;
 }
 
-/* Status & deadline smaller */
-.assignment-status,
-.assignment-deadline {
-  font-size: 0.9em;
-  white-space: nowrap;
-}
-
 /* Status value emphasis */
 .assignment-status strong {
   font-weight: bold;
