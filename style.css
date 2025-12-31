@@ -374,8 +374,10 @@ button {
 .assignment-row {
   display: grid;
   grid-template-columns:
-    140px   /* ID */
     240px   /* Title */
+    140px   /* ID */
+    140px /* Type */
+    200px /* Entity */
     180px   /* Status */
     220px   /* Dates */
     160px   /* File status */
