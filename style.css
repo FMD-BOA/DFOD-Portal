@@ -349,7 +349,6 @@ button {
 
 .assignment .assignment-status {
   flex: 1;
-  white-space: nowrap;
 }
 
 .assignment .assignment-deadline {
@@ -375,25 +374,26 @@ button {
 .assignment-row {
   display: grid;
   grid-template-columns:
-    1fr        /* ID */
-    3fr         /* Title */
-    3fr       /* Status */
-    3fr       /* Dates */
-    2fr       /* File status */
-    4fr;       /* Buttons */
+    140px   /* ID */
+    240px   /* Title */
+    180px   /* Status */
+    220px   /* Dates */
+    160px   /* File status */
+    auto;   /* Buttons */
+
   align-items: center;
-  gap: 20px;
+  column-gap: 20px;
+
   max-width: 1400px;
   margin: 0 auto;
+  padding: 0 20px;
   width: 100%;
-  padding: 0 15px;
   box-sizing: border-box;
 }
 
 .assignment-file-status {
   font-size: 0.85em;
   color: #666;
-  white-space: nowrap;
 }
 
 .assignment-file-status.uploaded {
@@ -405,7 +405,6 @@ button {
 .assignment-id {
   font-size: 1.2em;
   font-weight: bold;
-  min-width: 90px;
   letter-spacing: 1px;
 }
 
