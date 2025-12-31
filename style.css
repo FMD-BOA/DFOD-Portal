@@ -375,12 +375,12 @@ button {
 .assignment-row {
   display: grid;
   grid-template-columns:
-    auto        /* ID */
-    auto         /* Title */
-    auto       /* Status */
-    auto       /* Dates */
-    auto       /* File status */
-    auto;       /* Buttons */
+    1fr        /* ID */
+    2fr         /* Title */
+    3fr       /* Status */
+    3fr       /* Dates */
+    2fr       /* File status */
+    4fr;       /* Buttons */
   align-items: center;
   gap: 20px;
   width: 100%;
