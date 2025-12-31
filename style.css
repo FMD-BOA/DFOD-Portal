@@ -101,7 +101,6 @@ button {
 /* CHAT BOX */
 .chat-box {
   width: 100%;
-  max-width: 0.8vh;
   margin: 20px auto;
   padding: 10px;
   background: white;
