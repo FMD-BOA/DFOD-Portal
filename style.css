@@ -487,4 +487,17 @@ button {
   gap: 6px;
 }
 
+.assignments-table button,
+.assignments-table .upload-btn {
+  line-height: 1;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assignments-table td {
+  line-height: 1.2;
+}
+
 
