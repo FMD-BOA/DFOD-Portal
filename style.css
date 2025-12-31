@@ -421,8 +421,12 @@ button {
 .assignments-table td {
   padding: 10px 12px;
   text-align: center;
-  border-bottom: 1px solid #e0e0e0;
   white-space: nowrap;
+}
+
+/* ROW divider instead of cell divider */
+.assignments-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
 }
 
 .assignments-table th {
