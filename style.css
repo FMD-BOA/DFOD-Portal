@@ -376,7 +376,7 @@ button {
   display: grid;
   grid-template-columns:
     1fr        /* ID */
-    minmax(220px, 3fr)         /* Title */
+    3fr         /* Title */
     3fr       /* Status */
     3fr       /* Dates */
     2fr       /* File status */
