@@ -10,148 +10,107 @@ import {
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* ---------- Firebase Setup ---------- */
+/* ---------- Firebase ---------- */
 const firebaseConfig = {
   apiKey: "AIzaSyA4rFUf7-avxLsSuarrh1fZn8Pd91Q2oic",
   authDomain: "fmd-dfod-portal-ca1da.firebaseapp.com",
   projectId: "fmd-dfod-portal-ca1da",
-  storageBucket: "fmd-dfod-portal-ca1da.firebasestorage.app",
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-/* ---------- Supabase Setup ---------- */
-const supabaseUrl = "https://liftipqbdbtmkymdfnxi.supabase.co";
-const supabaseKey = "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo";
-const supabase = createClient(supabaseUrl, supabaseKey);
+/* ---------- Supabase ---------- */
+const supabase = createClient(
+  "https://liftipqbdbtmkymdfnxi.supabase.co",
+  "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo"
+);
 
 /* ---------- DOM ---------- */
 const assignmentsList = document.getElementById("assignments-list");
-const logoutBtn = document.getElementById("logout-btn");
-const chatBtn = document.getElementById("chat-btn");
-
-/* ---------- Logout ---------- */
-if (logoutBtn) {
-  logoutBtn.onclick = async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  };
-}
-
-/* ---------- Chat Navigation ---------- */
-if (chatBtn) {
-  chatBtn.onclick = () => {
-    window.location.href = "chat.html";
-  };
-}
 
 /* ---------- Live Assignments ---------- */
-const assignmentsCol = collection(db, "assignments");
-
-onSnapshot(assignmentsCol, (snapshot) => {
+onSnapshot(collection(db, "assignments"), (snapshot) => {
   assignmentsList.innerHTML = "";
 
+  /* ---------- TABLE ---------- */
+  const table = document.createElement("table");
+  table.className = "assignments-table";
+
+  table.innerHTML = `
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Dates</th>
+        <th>File</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+
+  const tbody = table.querySelector("tbody");
+
   snapshot.forEach((docSnap) => {
-    const assignment = docSnap.data();
-    const assignmentId = docSnap.id;
+    const a = docSnap.data();
+    const id = docSnap.id;
 
-    const acceptedDate = assignment["acceptance-date"]
-      ? assignment["acceptance-date"].toDate().toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }).toUpperCase()
-      : null;
+    const acceptedDate = a["acceptance-date"]
+      ? a["acceptance-date"].toDate().toLocaleDateString("en-GB").toUpperCase()
+      : "";
 
-    const deadlineDate = assignment.deadline
-      ? assignment.deadline.toDate().toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }).toUpperCase()
+    const deadlineDate = a.deadline
+      ? a.deadline.toDate().toLocaleDateString("en-GB").toUpperCase()
       : "N/A";
 
-    const container = document.createElement("div");
-    container.className = "assignment";
+    const row = document.createElement("tr");
 
-    container.innerHTML = `
-      <div class="assignment-row">
+    row.innerHTML = `
+      <td class="title"><strong>${a.title}</strong></td>
 
-        <div class="assignment-title">
-          <strong>${assignment.title}</strong>
-        </div>
+      <td>${a.ID || "—"}</td>
 
-        <div class="assignment-id">
-          ID: ${assignment.ID || "—"}
-        </div>
+      <td class="status ${a.status === "Accepted" ? "status-accepted" : a.status === "Rejected" ? "status-rejected" : ""}">
+        ${a.status || "Pending"}
+      </td>
 
-        <div class="assignment-type">
-          Type: ${assignment.type}
-        </div>
+      <td class="dates">
+        ${acceptedDate ? `ACCEPTED: ${acceptedDate}<br>` : ""}
+        DEADLINE: ${deadlineDate}
+      </td>
 
-        <div class="assignment-type">
-          Responsible Entity: ${assignment.department}
-        </div>
+      <td class="file-status ${a.fileUrl ? "uploaded" : ""}">
+        ${a.fileUrl ? "File uploaded" : "No file uploaded"}
+      </td>
 
-        <div class="assignment-status">
-          Status: <strong>${assignment.status || "Pending"}</strong>
-        </div>
-
-        <div class="assignment-dates">
-          ${
-            acceptedDate
-              ? `<div>ACCEPTED: ${acceptedDate}</div>`
-              : assignment.status === "Rejected"
-              ? `<div>REJECTED</div>`
-              : ``
-          }
-          <div>DEADLINE: ${deadlineDate}</div>
-        </div>
-
-        <div class="assignment-file-status">
-          ${assignment.fileUrl ? "Results submitted" : "Results pending upload"}
-        </div>
-
-        <div class="buttons-row">
-          <div class="decision-buttons">
-            <button class="accept-btn">Accept</button>
-            <button class="reject-btn">Reject</button>
-          </div>
-
-          <label class="upload-btn">
-            Upload Results
-            <input type="file" class="upload-input" accept=".pdf,.txt">
-          </label>
-        </div>
-
-      </div>
+      <td class="actions">
+        <button class="accept-btn">Accept</button>
+        <button class="reject-btn">Reject</button>
+        <label class="upload-btn">
+          Upload
+          <input type="file" class="upload-input" accept=".pdf,.txt">
+        </label>
+      </td>
     `;
 
     /* ---------- Elements ---------- */
-    const acceptBtn = container.querySelector(".accept-btn");
-    const rejectBtn = container.querySelector(".reject-btn");
-    const uploadInput = container.querySelector(".upload-input");
-    const uploadLabel = container.querySelector(".upload-btn");
-    const fileStatusEl = container.querySelector(".assignment-file-status");
-    const statusEl = container.querySelector(".assignment-status strong");
+    const acceptBtn = row.querySelector(".accept-btn");
+    const rejectBtn = row.querySelector(".reject-btn");
+    const uploadInput = row.querySelector(".upload-input");
+    const uploadLabel = row.querySelector(".upload-btn");
+    const fileStatus = row.querySelector(".file-status");
 
-    /* ---------- Status colouring ---------- */
-    if (assignment.status === "Accepted") {
-      statusEl.classList.add("status-accepted");
-    } else if (assignment.status === "Rejected") {
-      statusEl.classList.add("status-rejected");
-    }
-
-    /* ---------- Decision locking ---------- */
-    if (assignment.status === "Accepted" || assignment.status === "Rejected") {
+    /* ---------- Lock decisions ---------- */
+    if (a.status) {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
     }
 
-    /* ---------- Upload lock (visual + functional) ---------- */
-    if (assignment.status === "Accepted") {
+    /* ---------- Upload lock ---------- */
+    if (a.status === "Accepted") {
       uploadInput.disabled = false;
       uploadLabel.classList.remove("upload-disabled");
     } else {
@@ -161,9 +120,8 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
-
-      await updateDoc(doc(db, "assignments", assignmentId), {
+      if (a.status) return;
+      await updateDoc(doc(db, "assignments", id), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
@@ -171,9 +129,8 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
-
-      await updateDoc(doc(db, "assignments", assignmentId), {
+      if (a.status) return;
+      await updateDoc(doc(db, "assignments", id), {
         status: "Rejected",
       });
     };
@@ -183,29 +140,31 @@ onSnapshot(assignmentsCol, (snapshot) => {
       const file = e.target.files[0];
       if (!file) return;
 
-      fileStatusEl.textContent = "Uploading…";
+      fileStatus.textContent = "Uploading…";
 
       const { error } = await supabase.storage
         .from("uploads")
-        .upload(`${assignmentId}/${file.name}`, file, { upsert: true });
+        .upload(`${id}/${file.name}`, file, { upsert: true });
 
       if (error) {
-        fileStatusEl.textContent = "Upload failed";
+        fileStatus.textContent = "Upload failed";
         return;
       }
 
       const { data } = supabase.storage
         .from("uploads")
-        .getPublicUrl(`${assignmentId}/${file.name}`);
+        .getPublicUrl(`${id}/${file.name}`);
 
-      await updateDoc(doc(db, "assignments", assignmentId), {
+      await updateDoc(doc(db, "assignments", id), {
         fileUrl: data.publicUrl,
       });
 
-      fileStatusEl.textContent = "File uploaded";
-      fileStatusEl.classList.add("uploaded");
+      fileStatus.textContent = "File uploaded";
+      fileStatus.classList.add("uploaded");
     };
 
-    assignmentsList.appendChild(container);
+    tbody.appendChild(row);
   });
+
+  assignmentsList.appendChild(table);
 });
