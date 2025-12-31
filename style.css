@@ -299,6 +299,8 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Buttons nebeneinander */
@@ -393,6 +395,8 @@ button {
   align-items: center;
   gap: 20px;
   padding: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 
