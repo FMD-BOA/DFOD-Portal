@@ -305,8 +305,9 @@ button {
 /* Buttons nebeneinander */
 .assignment .buttons-row {
   display: flex;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 /* Accept / Reject Buttons */
@@ -383,12 +384,18 @@ button {
 
 /* Row layout */
 .assignment-row {
-  display: flex;
+  display: grid;
+  grid-template-columns:
+    90px        /* ID */
+    1fr         /* Title */
+    140px       /* Status */
+    160px       /* Dates */
+    auto;       /* Buttons */
   align-items: center;
-  gap: 30px;
+  gap: 20px;
   padding: 8px 0;
-  margin-bottom: 8px;
 }
+
 
 /* ID block */
 .assignment-id {
@@ -400,18 +407,19 @@ button {
 
 /* Title block */
 .assignment-title {
-  font-size: 1.15em;
-  font-weight: normal;
-  flex: 1;
   text-align: center;
+  font-size: 1.15em;
 }
+
 
 .assignment-dates {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 0.6em; /* makes BOTH dates smaller & equal */
+  font-size: 0.8em;
+  text-align: left;
 }
+
 
 /* Make ONLY the title text larger */
 .assignment-title strong {
