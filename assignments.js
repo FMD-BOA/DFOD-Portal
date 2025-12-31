@@ -57,25 +57,18 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const assignment = docSnap.data();
     const assignmentId = docSnap.id;
 
-    const container = document.createElement("div");
-    container.className = "assignment";
+    const acceptedDate = assignment["acceptance-date"]
+      ? assignment["acceptance-date"]
+          .toDate()
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+          .toUpperCase()
+      : null;
 
-    const acceptedDateHtml = assignment["acceptance-date"]
-      ? `<div class="acceptance-date">
-           ACCEPTED: ${assignment["acceptance-date"]
-             .toDate()
-             .toLocaleDateString("en-GB", {
-               day: "2-digit",
-               month: "short",
-               year: "numeric",
-             })
-             .toUpperCase()}
-         </div>`
-      : assignment.status === "Rejected"
-      ? `<div class="rejected-date">REJECTED</div>`
-      : "";
-
-    const deadlineHtml = assignment.deadline
+    const deadlineDate = assignment.deadline
       ? assignment.deadline
           .toDate()
           .toLocaleDateString("en-GB", {
@@ -86,26 +79,34 @@ onSnapshot(assignmentsCol, (snapshot) => {
           .toUpperCase()
       : "N/A";
 
-    const fileLinkHtml = assignment.fileUrl
-      ? `<div class="file-link">
-           <a href="${assignment.fileUrl}" target="_blank">View uploaded file</a>
-         </div>`
-      : "";
+    const container = document.createElement("div");
+    container.className = "assignment";
 
     container.innerHTML = `
       <div class="assignment-row">
 
         <div class="assignment-title">${assignment.title}</div>
 
-        <div class="assignment-id">ID: ${assignment.ID || "—"}</div>
+        <div class="assignment-id">
+          ID: ${assignment.ID || "—"}
+        </div>
 
         <div class="assignment-status">
           Status: <strong>${assignment.status || "Pending"}</strong>
         </div>
 
         <div class="assignment-dates">
-          ${acceptedDateHtml}
-          <div class="assignment-deadline">DEADLINE: ${deadlineHtml}</div>
+          ${
+            acceptedDate
+              ? `<div class="acceptance-date">ACCEPTED: ${acceptedDate}</div>`
+              : assignment.status === "Rejected"
+              ? `<div class="rejected-date">REJECTED</div>`
+              : ``
+          }
+
+          <div class="assignment-deadline">
+            DEADLINE: ${deadlineDate}
+          </div>
         </div>
 
         <div class="buttons-row">
@@ -121,34 +122,43 @@ onSnapshot(assignmentsCol, (snapshot) => {
             </label>
           </div>
         </div>
+
       </div>
 
-      <div class="upload-status"></div>
-      ${fileLinkHtml}
+      <div class="upload-status">
+        ${
+          assignment.fileUrl
+            ? `<a href="${assignment.fileUrl}" target="_blank" class="file-link">View uploaded file</a>
+               <div class="upload-success">File uploaded successfully.</div>`
+            : ""
+        }
+      </div>
     `;
 
     /* ---------- Elements ---------- */
     const acceptBtn = container.querySelector(".accept-btn");
     const rejectBtn = container.querySelector(".reject-btn");
     const uploadInput = container.querySelector(".upload-input");
+    const uploadStatus = container.querySelector(".upload-status");
     const statusEl = container.querySelector(".assignment-status strong");
-    const statusDiv = container.querySelector(".upload-status");
 
     /* ---------- Status colouring ---------- */
-    if (assignment.status === "Accepted") statusEl.classList.add("status-accepted");
-    if (assignment.status === "Rejected") statusEl.classList.add("status-rejected");
+    if (assignment.status === "Accepted") {
+      statusEl.classList.add("status-accepted");
+    } else if (assignment.status === "Rejected") {
+      statusEl.classList.add("status-rejected");
+    }
 
     /* ---------- Decision locking ---------- */
     if (assignment.status === "Accepted" || assignment.status === "Rejected") {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
+      acceptBtn.classList.add("decision-locked");
+      rejectBtn.classList.add("decision-locked");
     }
 
     /* ---------- Upload lock ---------- */
-    const deadlinePassed =
-      assignment.deadline && new Date() > assignment.deadline.toDate();
-
-    if (assignment.status === "Accepted" && !deadlinePassed && !assignment.fileUrl) {
+    if (assignment.status === "Accepted") {
       uploadInput.disabled = false;
     } else {
       uploadInput.disabled = true;
@@ -176,39 +186,29 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Upload ---------- */
     uploadInput.onchange = async (e) => {
+      if (uploadInput.disabled) return;
+
       const file = e.target.files[0];
       if (!file) return;
 
-      if (deadlinePassed) {
-        statusDiv.textContent = "Deadline passed. Upload disabled.";
-        return;
-      }
-
-      statusDiv.textContent = "Uploading…";
-
-      const safeName = `${Date.now()}_${file.name}`;
-      const path = `${assignmentId}/${safeName}`;
+      uploadStatus.textContent = "Uploading…";
 
       const { error } = await supabase.storage
         .from("uploads")
-        .upload(path, file);
+        .upload(`${assignmentId}/${file.name}`, file, { upsert: true });
 
       if (error) {
-        statusDiv.textContent = "Upload failed: " + error.message;
+        uploadStatus.textContent = "Upload failed: " + error.message;
         return;
       }
 
-      const { publicUrl } = supabase.storage
+      const { data } = supabase.storage
         .from("uploads")
-        .getPublicUrl(path);
+        .getPublicUrl(`${assignmentId}/${file.name}`);
 
       await updateDoc(doc(db, "assignments", assignmentId), {
-        fileUrl: publicUrl,
-        uploadComplete: true,
+        fileUrl: data.publicUrl,
       });
-
-      statusDiv.textContent = "File uploaded successfully.";
-      uploadInput.disabled = true;
     };
 
     assignmentsList.appendChild(container);
