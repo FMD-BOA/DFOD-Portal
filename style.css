@@ -277,28 +277,6 @@ button {
 }
 
 
-.assignment {
-  background-color: #fff;
-  border-radius: 6px;
-  padding: 12px 0;
-  margin-bottom: 15px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  box-sizing: border-box;
-  overflow-x: auto;
-}
-
-/* Buttons nebeneinander */
-.assignment .buttons-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  justify-content: flex-start;
-}
-
 /* Accept / Reject Buttons */
 .assignment .accept-btn {
   background-color: #28a745;
@@ -331,31 +309,6 @@ button {
   margin-top: 6px;
 }
 
-/* Upload Status */
-.assignment .upload-status {
-  font-size: 0.9em;
-  color: #555;
-  margin-top: 4px;
-}
-
-/* Optional: Datei-Link */
-.assignment .file-link {
-  font-size: 0.9em;
-  color: #007bff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-
-.assignment .assignment-status {
-  flex: 1;
-}
-
-.assignment .assignment-deadline {
-  flex: 1;
-  white-space: nowrap;
-}
-
 .assignment .buttons-row {
   flex: 2;
   display: flex;
@@ -368,29 +321,6 @@ button {
   .assignment .buttons-row {
     flex-direction: column;
   }
-}
-
-/* Row layout */
-.assignment-row {
-  display: grid;
-  grid-template-columns:
-    240px   /* Title */
-    140px   /* ID */
-    140px /* Type */
-    200px /* Entity */
-    180px   /* Status */
-    220px   /* Dates */
-    160px   /* File status */
-    auto;   /* Buttons */
-
-  align-items: center;
-  column-gap: 20px;
-
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 20px;
-  width: 100%;
-  box-sizing: border-box;
 }
 
 .assignment-file-status {
@@ -431,32 +361,6 @@ button {
   font-size: 1.2em;
 }
 
-/* Status value emphasis */
-.assignment-status strong {
-  font-weight: bold;
-}
-
-/* Optional: subtle divider */
-.assignment-row:not(:last-child) {
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.upload-input::file-selector-button {
-  content: "Upload documents";
-  font-family: serif;
-  padding: 6px 12px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-/* Hover */
-.upload-input::file-selector-button:hover {
-  background-color: #0056b3;
-}
-
 .upload-btn {
   background-color: #007bff;
   color: white;
@@ -484,3 +388,84 @@ button {
 .upload-btn.upload-disabled:hover {
   background-color: #9aa7c0;
 }
+
+/* =========================
+   ASSIGNMENTS TABLE
+   ========================= */
+
+.assignments-table {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto 40px auto;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.assignments-table th,
+.assignments-table td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+  white-space: nowrap;
+}
+
+.assignments-table th {
+  background: #f0f0f0;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Title column */
+.assignments-table td.title {
+  text-align: center;
+  font-size: 1.1em;
+}
+
+/* Status colours */
+.assignments-table .status-accepted {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.assignments-table .status-rejected {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Dates column */
+.assignments-table .dates {
+  font-size: 0.85em;
+  line-height: 1.4;
+  text-align: left;
+}
+
+/* File status */
+.assignments-table .file-status {
+  font-size: 0.85em;
+  color: #666;
+}
+
+.assignments-table .file-status.uploaded {
+  color: #28a745;
+  font-weight: bold;
+}
+
+/* Actions column */
+.assignments-table .actions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Upload disabled */
+.upload-btn.upload-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
