@@ -473,18 +473,18 @@ button {
   font-weight: bold;
 }
 
-.assignments-table .actions {
-  display: flex;
-  justify-content: center;
-  align-items: center; /* ← THIS is the key */
-  gap: 6px;
-  height: 100%;
-}
-
 /* Upload disabled */
 .upload-btn.upload-disabled {
   opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
 }
+
+.assignments-table td.actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 
