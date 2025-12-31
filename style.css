@@ -207,7 +207,7 @@ button {
 
 .accept-btn:disabled,
 .reject-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: default;
 }
 
@@ -311,7 +311,7 @@ button {
 
 .assignment .accept-btn:disabled,
 .assignment .reject-btn:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: default;
 }
 
@@ -391,7 +391,7 @@ button {
 }
 
 .upload-btn.upload-disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
 }
@@ -477,7 +477,7 @@ button {
 
 /* Upload disabled */
 .upload-btn.upload-disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
   pointer-events: none;
 }
