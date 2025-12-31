@@ -23,9 +23,10 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 /* ---------- Supabase Setup ---------- */
-const supabaseUrl = "https://YOUR_SUPABASE_URL.supabase.co"; // <-- replace
+const supabaseUrl = "https://YOUR_PROJECT_REF.supabase.co";
 const supabaseKey = "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo";
 const supabase = createClient(supabaseUrl, supabaseKey);
+
 
 /* ---------- DOM ---------- */
 const assignmentsList = document.getElementById("assignments-list");
