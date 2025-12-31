@@ -27,6 +27,22 @@ const supabase = createClient(
   "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo"
 );
 
+const logoutBtn = document.getElementById("logout-btn");
+const chatBtn = document.getElementById("chat-btn");
+
+if (logoutBtn) {
+  logoutBtn.onclick = async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  };
+}
+
+if (chatBtn) {
+  chatBtn.onclick = () => {
+    window.location.href = "chat.html";
+  };
+}
+
 /* ---------- DOM ---------- */
 const assignmentsList = document.getElementById("assignments-list");
 
