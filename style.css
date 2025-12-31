@@ -375,11 +375,11 @@ button {
 .assignment-row {
   display: grid;
   grid-template-columns:
-    90px        /* ID */
-    1fr         /* Title */
-    140px       /* Status */
-    160px       /* Dates */
-    140px       /* File status */
+    auto        /* ID */
+    auto         /* Title */
+    auto       /* Status */
+    auto       /* Dates */
+    auto       /* File status */
     auto;       /* Buttons */
   align-items: center;
   gap: 20px;
