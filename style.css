@@ -111,7 +111,6 @@ button {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   box-sizing: border-box;
-  overflow-x: auto;
 }
 
 
@@ -286,6 +285,8 @@ button {
   box-sizing: border-box;
   position: relative;
   z-index: 1;
+  overflow-x: auto;
+  width: 100%;
 }
 
 
@@ -502,14 +503,14 @@ button {
 }
 
 @media (max-width: 768px) {
-  .chat-box {
-    width: 100%;
-    padding: 10px;
+  #assignments-list {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .assignments-table {
     min-width: 900px;
   }
 }
+
 
