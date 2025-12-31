@@ -267,11 +267,6 @@ button {
   flex-shrink: 0;
 }
 
-.upload-btn:disabled {
-    opacity: 0.5;
-    cursor: default;
-}
-
 /* ASSIGNMENTS LISTE */
 #assignments-list {
   width: 100%;
@@ -478,4 +473,8 @@ button {
 .upload-btn.upload-disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.upload-btn.upload-disabled:hover {
+  background-color: #9aa7c0;
 }
