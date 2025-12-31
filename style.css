@@ -416,7 +416,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 0.8em;
+  font-size: 0.9em;
   text-align: left;
 }
 
