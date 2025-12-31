@@ -128,7 +128,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
       <div class="upload-status">
         ${
           assignment.fileUrl
-            ? `<a href="${assignment.fileUrl}" target="_blank" class="file-link">View uploaded file</a>
+            ? `<a href="${assignment.fileUrl}" target="_blank" class="file-link"></a>
                <div class="upload-success">File uploaded successfully.</div>`
             : ""
         }
