@@ -155,16 +155,19 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (a.status) return;
+      if (a.status === "Accepted" || a.status === "Rejected") return;
+    
       await updateDoc(doc(db, "assignments", id), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
     };
 
+
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (a.status) return;
+      if (a.status === "Accepted" || a.status === "Rejected") return;
+    
       await updateDoc(doc(db, "assignments", id), {
         status: "Rejected",
       });
