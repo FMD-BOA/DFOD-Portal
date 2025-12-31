@@ -125,6 +125,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const acceptBtn = container.querySelector(".accept-btn");
     const rejectBtn = container.querySelector(".reject-btn");
     const uploadInput = container.querySelector(".upload-input");
+    const uploadLabel = container.querySelector(".upload-btn");
     const fileStatusEl = container.querySelector(".assignment-file-status");
     const statusEl = container.querySelector(".assignment-status strong");
 
@@ -141,8 +142,14 @@ onSnapshot(assignmentsCol, (snapshot) => {
       rejectBtn.disabled = true;
     }
 
-    /* ---------- Upload lock ---------- */
-    uploadInput.disabled = assignment.status !== "Accepted";
+    /* ---------- Upload lock (VISUAL + FUNCTIONAL) ---------- */
+    if (assignment.status === "Accepted") {
+      uploadInput.disabled = false;
+      uploadLabel.classList.remove("upload-disabled");
+    } else {
+      uploadInput.disabled = true;
+      uploadLabel.classList.add("upload-disabled");
+    }
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
