@@ -454,7 +454,7 @@ button {
 .assignments-table .dates {
   font-size: 0.85em;
   line-height: 1.4;
-  text-align: left;
+  text-align: center;
 }
 
 /* File status */
