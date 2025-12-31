@@ -27,7 +27,6 @@ const supabaseUrl = "https://liftipqbdbtmkymdfnxi.supabase.co";
 const supabaseKey = "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo";
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-
 /* ---------- DOM ---------- */
 const assignmentsList = document.getElementById("assignments-list");
 const logoutBtn = document.getElementById("logout-btn");
@@ -61,58 +60,53 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const container = document.createElement("div");
     container.className = "assignment";
 
+    const acceptedDateHtml = assignment["acceptance-date"]
+      ? `<div class="acceptance-date">
+           ACCEPTED: ${assignment["acceptance-date"]
+             .toDate()
+             .toLocaleDateString("en-GB", {
+               day: "2-digit",
+               month: "short",
+               year: "numeric",
+             })
+             .toUpperCase()}
+         </div>`
+      : assignment.status === "Rejected"
+      ? `<div class="rejected-date">REJECTED</div>`
+      : "";
+
+    const deadlineHtml = assignment.deadline
+      ? assignment.deadline
+          .toDate()
+          .toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })
+          .toUpperCase()
+      : "N/A";
+
+    const fileLinkHtml = assignment.fileUrl
+      ? `<div class="file-link">
+           <a href="${assignment.fileUrl}" target="_blank">View uploaded file</a>
+         </div>`
+      : "";
+
     container.innerHTML = `
       <div class="assignment-row">
 
-        <div class="assignment-title">
-          ${assignment.title}
-        </div>
+        <div class="assignment-title">${assignment.title}</div>
 
-        <div class="assignment-id">
-          ID: ${assignment.ID || "—"}
-        </div>
+        <div class="assignment-id">ID: ${assignment.ID || "—"}</div>
 
         <div class="assignment-status">
           Status: <strong>${assignment.status || "Pending"}</strong>
         </div>
-        
+
         <div class="assignment-dates">
-        
-          ${
-            assignment["acceptance-date"]
-              ? `<div class="acceptance-date">
-                   Accepted: ${assignment["acceptance-date"]
-                     .toDate()
-                     .toLocaleDateString("en-GB", {
-                       day: "2-digit",
-                       month: "short",
-                       year: "numeric",
-                     })
-                     .toUpperCase()}
-                 </div>`
-              : assignment.status === "Rejected"
-              ? `<div class="rejected-date">REJECTED</div>`
-              : ``
-          }
-        
-          <div class="assignment-deadline">
-            Deadline: ${
-              assignment.deadline
-                ? assignment.deadline
-                    .toDate()
-                    .toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "short",
-                      year: "numeric",
-                    })
-                    .toUpperCase()
-                : "N/A"
-            }
-          </div>
-        
+          ${acceptedDateHtml}
+          <div class="assignment-deadline">DEADLINE: ${deadlineHtml}</div>
         </div>
-
-
 
         <div class="buttons-row">
           <div class="decision-buttons">
@@ -120,16 +114,17 @@ onSnapshot(assignmentsCol, (snapshot) => {
             <button class="reject-btn">Reject</button>
           </div>
 
-        <div class="upload-area">
-          <label class="upload-btn">
-            Upload Results
-            <input type="file" class="upload-input" accept=".pdf,.txt" hidden>
-          </label>
+          <div class="upload-area">
+            <label class="upload-btn">
+              Upload Results
+              <input type="file" class="upload-input" accept=".pdf,.txt" hidden>
+            </label>
+          </div>
         </div>
-
       </div>
 
       <div class="upload-status"></div>
+      ${fileLinkHtml}
     `;
 
     /* ---------- Elements ---------- */
@@ -137,24 +132,23 @@ onSnapshot(assignmentsCol, (snapshot) => {
     const rejectBtn = container.querySelector(".reject-btn");
     const uploadInput = container.querySelector(".upload-input");
     const statusEl = container.querySelector(".assignment-status strong");
+    const statusDiv = container.querySelector(".upload-status");
 
     /* ---------- Status colouring ---------- */
-    if (assignment.status === "Accepted") {
-      statusEl.classList.add("status-accepted");
-    } else if (assignment.status === "Rejected") {
-      statusEl.classList.add("status-rejected");
-    }
+    if (assignment.status === "Accepted") statusEl.classList.add("status-accepted");
+    if (assignment.status === "Rejected") statusEl.classList.add("status-rejected");
 
     /* ---------- Decision locking ---------- */
     if (assignment.status === "Accepted" || assignment.status === "Rejected") {
       acceptBtn.disabled = true;
       rejectBtn.disabled = true;
-      acceptBtn.classList.add("decision-locked");
-      rejectBtn.classList.add("decision-locked");
     }
 
     /* ---------- Upload lock ---------- */
-    if (assignment.status === "Accepted") {
+    const deadlinePassed =
+      assignment.deadline && new Date() > assignment.deadline.toDate();
+
+    if (assignment.status === "Accepted" && !deadlinePassed && !assignment.fileUrl) {
       uploadInput.disabled = false;
     } else {
       uploadInput.disabled = true;
@@ -163,18 +157,18 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
-    
+      if (assignment.status) return;
+
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
     };
-    
+
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
-    
+      if (assignment.status) return;
+
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Rejected",
       });
@@ -182,16 +176,22 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Upload ---------- */
     uploadInput.onchange = async (e) => {
-      if (uploadInput.disabled) return;
-
       const file = e.target.files[0];
       if (!file) return;
 
-      const statusDiv = container.querySelector(".upload-status");
+      if (deadlinePassed) {
+        statusDiv.textContent = "Deadline passed. Upload disabled.";
+        return;
+      }
+
+      statusDiv.textContent = "Uploading…";
+
+      const safeName = `${Date.now()}_${file.name}`;
+      const path = `${assignmentId}/${safeName}`;
 
       const { error } = await supabase.storage
         .from("uploads")
-        .upload(`${assignmentId}/${file.name}`, file, { upsert: true });
+        .upload(path, file);
 
       if (error) {
         statusDiv.textContent = "Upload failed: " + error.message;
@@ -200,13 +200,15 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
       const { publicUrl } = supabase.storage
         .from("uploads")
-        .getPublicUrl(`${assignmentId}/${file.name}`);
+        .getPublicUrl(path);
 
       await updateDoc(doc(db, "assignments", assignmentId), {
         fileUrl: publicUrl,
+        uploadComplete: true,
       });
 
-      statusDiv.textContent = "File uploaded successfully!";
+      statusDiv.textContent = "File uploaded successfully.";
+      uploadInput.disabled = true;
     };
 
     assignmentsList.appendChild(container);
