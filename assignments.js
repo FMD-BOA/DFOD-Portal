@@ -43,6 +43,8 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       <tr>
         <th>Title</th>
         <th>ID</th>
+        <th>Type</th>
+        <th>Department</th>
         <th>Status</th>
         <th>Dates</th>
         <th>File</th>
@@ -72,7 +74,11 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       <td class="title"><strong>${a.title}</strong></td>
 
       <td>${a.ID || "—"}</td>
-
+      
+      <td>${assignment.type || "—"}</td>
+      
+      <td>${assignment.department || "—"}</td>
+      
       <td class="status ${a.status === "Accepted" ? "status-accepted" : a.status === "Rejected" ? "status-rejected" : ""}">
         ${a.status || "Pending"}
       </td>
