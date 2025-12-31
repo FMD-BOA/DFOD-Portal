@@ -101,14 +101,15 @@ button {
 /* CHAT BOX */
 .chat-box {
   width: 100%;
-  margin: 20px auto;
-  padding: 10px;
+  margin: 20px 0;
+  padding: 10px 20px;
   background: white;
   text-align: center;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  font: monospace;
+  box-sizing: border-box;
 }
+
 
 /* Chat Log */
 #log div {
@@ -142,18 +143,6 @@ button {
   margin-top: 10px;
   font-family: serif;
   padding: 6px;
-}
-
-/* Mission Box */
-.chat-box {
-  width: 100%;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 10px;
-  background: white;
-  text-align: center;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 /* Einzelne Mission als Zeile */
