@@ -410,7 +410,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 0.8em; /* makes BOTH dates smaller & equal */
+  font-size: 0.6em; /* makes BOTH dates smaller & equal */
 }
 
 /* Make ONLY the title text larger */
