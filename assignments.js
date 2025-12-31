@@ -142,7 +142,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
       rejectBtn.disabled = true;
     }
 
-    /* ---------- Upload lock (VISUAL + FUNCTIONAL) ---------- */
+    /* ---------- Upload lock (visual + functional) ---------- */
     if (assignment.status === "Accepted") {
       uploadInput.disabled = false;
       uploadLabel.classList.remove("upload-disabled");
@@ -153,7 +153,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (assignment.status) return;
+      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
 
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Accepted",
@@ -163,7 +163,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
 
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (assignment.status) return;
+      if (assignment.status === "Accepted" || assignment.status === "Rejected") return;
 
       await updateDoc(doc(db, "assignments", assignmentId), {
         status: "Rejected",
