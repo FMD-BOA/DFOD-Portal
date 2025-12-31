@@ -95,9 +95,16 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       
       <td>${a.department || "—"}</td>
       
-      <td class="status ${a.status === "Accepted" ? "status-accepted" : a.status === "Rejected" ? "status-rejected" : ""}">
+      <td class="status ${
+        a.status === "Accepted"
+          ? "status-accepted"
+          : a.status === "Rejected"
+          ? "status-rejected"
+          : "status-pending"
+      }">
         ${a.status || "Pending"}
       </td>
+
 
       <td class="dates">
         ${acceptedDate ? `ACCEPTED: ${acceptedDate}<br>` : ""}
