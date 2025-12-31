@@ -474,6 +474,7 @@ button {
 .upload-btn.upload-disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .upload-btn.upload-disabled:hover {
