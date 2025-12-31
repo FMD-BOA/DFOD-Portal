@@ -103,7 +103,7 @@ onSnapshot(assignmentsCol, (snapshot) => {
         </div>
 
         <div class="assignment-file-status">
-          ${assignment.fileUrl ? "File uploaded" : "No file uploaded"}
+          ${assignment.fileUrl ? "Results submitted" : "Results pending upload"}
         </div>
 
         <div class="buttons-row">
