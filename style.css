@@ -111,6 +111,7 @@ button {
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   box-sizing: border-box;
+  overflow-x: auto;
 }
 
 
@@ -500,4 +501,15 @@ button {
   line-height: 1.2;
 }
 
+@media (max-width: 768px) {
+  .chat-box {
+    width: 100%;
+    padding: 10px;
+    overflow-x: auto;
+  }
+
+  .assignments-table {
+    min-width: 900px;
+  }
+}
 
