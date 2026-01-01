@@ -513,4 +513,16 @@ button {
   }
 }
 
+/* Pending allocation state */
+.assignments-table .status-pending-allocation {
+  color: #999;
+  font-weight: bold;
+}
 
+/* Disabled buttons visual */
+.assignments-table button:disabled,
+.upload-btn.upload-disabled {
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed;
+}
