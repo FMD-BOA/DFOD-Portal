@@ -79,7 +79,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     /* ---------- Status handling ---------- */
     const statusText = a.status ?? "Pending";
 
-    const isPendingAllocation = statusText === "Under allocation";
+    const isPendingAllocation = statusText === "Under Allocation";
     const isFinalised =
       statusText === "Accepted" || statusText === "Rejected";
 
@@ -88,7 +88,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
         ? "status-accepted"
         : statusText === "Rejected"
         ? "status-rejected"
-        : statusText === "Under allocation"
+        : statusText === "Under Allocation"
         ? "status-pending-allocation"
         : "status-pending";
 
