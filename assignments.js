@@ -27,6 +27,7 @@ const supabase = createClient(
   "sb_publishable_qXmKdTRLInQdw5sX1TF-yg_oV_Tcjpo"
 );
 
+/* ---------- Top buttons ---------- */
 const logoutBtn = document.getElementById("logout-btn");
 const chatBtn = document.getElementById("chat-btn");
 
@@ -50,7 +51,6 @@ const assignmentsList = document.getElementById("assignments-list");
 onSnapshot(collection(db, "assignments"), (snapshot) => {
   assignmentsList.innerHTML = "";
 
-  /* ---------- TABLE ---------- */
   const table = document.createElement("table");
   table.className = "assignments-table";
 
@@ -76,6 +76,9 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const a = docSnap.data();
     const id = docSnap.id;
 
+    const isPendingAllocation = a.status === "Pending allocation";
+    const isFinalised = a.status === "Accepted" || a.status === "Rejected";
+
     const acceptedDate = a["acceptance-date"]
       ? a["acceptance-date"].toDate().toLocaleDateString("en-GB").toUpperCase()
       : "";
@@ -88,30 +91,26 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
 
     row.innerHTML = `
       <td class="title"><strong>${a.title}</strong></td>
-
       <td>${a.ID || "—"}</td>
-      
       <td>${a.type || "—"}</td>
-      
       <td>${a.department || "—"}</td>
-      
+
       <td class="status ${
         a.status === "Accepted"
           ? "status-accepted"
           : a.status === "Rejected"
           ? "status-rejected"
+          : a.status === "Pending allocation"
+          ? "status-pending-allocation"
           : "status-pending"
       }">
         ${a.status || "Pending"}
       </td>
 
-
       <td class="dates">
         ${acceptedDate ? `ACCEPTED: ${acceptedDate}<br>` : ""}
         DEADLINE: ${deadlineDate}
       </td>
-
-
 
       <td class="actions">
         <button class="accept-btn">Accept</button>
@@ -127,23 +126,16 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       </td>
     `;
 
-    /* ---------- Elements ---------- */
     const acceptBtn = row.querySelector(".accept-btn");
     const rejectBtn = row.querySelector(".reject-btn");
     const uploadInput = row.querySelector(".upload-input");
     const uploadLabel = row.querySelector(".upload-btn");
     const fileStatus = row.querySelector(".file-status");
 
-    /* ---------- Lock decisions ---------- */
-    if (a.status === "Accepted" || a.status === "Rejected") {
-      acceptBtn.disabled = true;
-      rejectBtn.disabled = true;
-    } else {
-      acceptBtn.disabled = false;
-      rejectBtn.disabled = false;
-    }
+    /* ---------- Button locks ---------- */
+    acceptBtn.disabled = isFinalised || isPendingAllocation;
+    rejectBtn.disabled = isFinalised || isPendingAllocation;
 
-    /* ---------- Upload lock ---------- */
     if (a.status === "Accepted") {
       uploadInput.disabled = false;
       uploadLabel.classList.remove("upload-disabled");
@@ -152,22 +144,23 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       uploadLabel.classList.add("upload-disabled");
     }
 
+    if (isPendingAllocation) {
+      uploadInput.disabled = true;
+      uploadLabel.classList.add("upload-disabled");
+    }
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (a.status === "Accepted" || a.status === "Rejected") return;
-    
+      if (isFinalised || isPendingAllocation) return;
       await updateDoc(doc(db, "assignments", id), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
     };
 
-
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (a.status === "Accepted" || a.status === "Rejected") return;
-    
+      if (isFinalised || isPendingAllocation) return;
       await updateDoc(doc(db, "assignments", id), {
         status: "Rejected",
       });
