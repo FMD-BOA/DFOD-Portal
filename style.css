@@ -515,16 +515,14 @@ button {
 
 /* Pending allocation state */
 .assignments-table .status-pending-allocation {
-  background: #6c757d; /* grey */
-  color: #fff;
+  color: #707070;
   font-weight: bold;
 }
 
 /* Disabled buttons visual */
 .assignments-table button:disabled,
 .upload-btn.upload-disabled {
-  background-color: #ccc !important;
-  color: #666 !important;
+  opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
 }
