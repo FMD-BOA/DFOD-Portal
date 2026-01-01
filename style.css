@@ -522,7 +522,7 @@ button {
 /* Disabled buttons visual */
 .assignments-table button:disabled,
 .upload-btn.upload-disabled {
-  opacity: 0.3;
+  opacity: 0.25;
   cursor: not-allowed;
   pointer-events: none;
 }
