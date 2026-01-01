@@ -515,7 +515,8 @@ button {
 
 /* Pending allocation state */
 .assignments-table .status-pending-allocation {
-  color: #999;
+  background: #6c757d; /* grey */
+  color: #fff;
   font-weight: bold;
 }
 
@@ -525,4 +526,5 @@ button {
   background-color: #ccc !important;
   color: #666 !important;
   cursor: not-allowed;
+  pointer-events: none;
 }
