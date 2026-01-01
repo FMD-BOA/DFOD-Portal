@@ -76,7 +76,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const a = docSnap.data();
     const id = docSnap.id;
 
-    const isPendingAllocation = a.status === "Pending allocation";
+    const isPendingAllocation = a.status === "Under allocation";
     const isFinalised = a.status === "Accepted" || a.status === "Rejected";
 
     const acceptedDate = a["acceptance-date"]
@@ -100,7 +100,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
           ? "status-accepted"
           : a.status === "Rejected"
           ? "status-rejected"
-          : a.status === "Pending allocation"
+          : a.status === "Under allocation"
           ? "status-pending-allocation"
           : "status-pending"
       }">
