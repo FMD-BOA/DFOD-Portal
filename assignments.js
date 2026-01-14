@@ -79,12 +79,14 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     /* ---------- Status handling ---------- */
     const statusText = a.status ?? "Pending";
 
-    const isPendingAllocation = statusText === "Under Allocation";
+    const isUnderAllocation = statusText === "Under Allocation";
     const isFinalised =
-      statusText === "Accepted" || statusText === "Rejected";
+      statusText === "Accepted" ||
+      statusText === "Rejected" ||
+      statusText === "Complete";
 
     const statusClass =
-      statusText === "Accepted"
+      statusText === "Accepted" || statusText === "Complete"
         ? "status-accepted"
         : statusText === "Rejected"
         ? "status-rejected"
@@ -139,8 +141,8 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const fileStatus = row.querySelector(".file-status");
 
     /* ---------- Button locks ---------- */
-    acceptBtn.disabled = isFinalised || isPendingAllocation;
-    rejectBtn.disabled = isFinalised || isPendingAllocation;
+    acceptBtn.disabled = isFinalised || isUnderAllocation;
+    rejectBtn.disabled = isFinalised || isUnderAllocation;
 
     if (statusText === "Accepted") {
       uploadInput.disabled = false;
@@ -150,14 +152,14 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       uploadLabel.classList.add("upload-disabled");
     }
 
-    if (isPendingAllocation) {
+    if (isUnderAllocation || isFinalised) {
       uploadInput.disabled = true;
       uploadLabel.classList.add("upload-disabled");
     }
 
     /* ---------- Accept ---------- */
     acceptBtn.onclick = async () => {
-      if (isFinalised || isPendingAllocation) return;
+      if (isFinalised || isUnderAllocation) return;
 
       await updateDoc(doc(db, "assignments", id), {
         status: "Accepted",
@@ -167,7 +169,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
 
     /* ---------- Reject ---------- */
     rejectBtn.onclick = async () => {
-      if (isFinalised || isPendingAllocation) return;
+      if (isFinalised || isUnderAllocation) return;
 
       await updateDoc(doc(db, "assignments", id), {
         status: "Rejected",
@@ -196,6 +198,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
 
       await updateDoc(doc(db, "assignments", id), {
         fileUrl: data.publicUrl,
+        status: "Complete"
       });
 
       fileStatus.textContent = "File uploaded";
