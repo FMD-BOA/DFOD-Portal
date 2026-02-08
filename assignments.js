@@ -76,23 +76,23 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const a = docSnap.data();
     const id = docSnap.id;
 
-    /* ---------- Status handling ---------- */
     const statusText = a.status ?? "Pending";
 
+    // --- Status Flags ---
     const isUnderAllocation = statusText === "Under Allocation";
-    const isFinalised =
-      statusText === "Accepted" ||
-      statusText === "Rejected" ||
-      statusText === "Complete";
+    const isRejected = statusText === "Rejected";
+    const isComplete = statusText === "Complete";
+    const isAccepted = statusText === "Accepted";
 
-    const statusClass =
-      statusText === "Accepted" || statusText === "Complete"
-        ? "status-accepted"
-        : statusText === "Rejected"
-        ? "status-rejected"
-        : statusText === "Under Allocation"
-        ? "status-pending-allocation"
-        : "status-pending";
+    const isFinalised = isRejected || isComplete;
+
+    const statusClass = isAccepted || isComplete
+      ? "status-accepted"
+      : isRejected
+      ? "status-rejected"
+      : isUnderAllocation
+      ? "status-pending-allocation"
+      : "status-pending";
 
     const acceptedDate = a["acceptance-date"]
       ? a["acceptance-date"].toDate().toLocaleDateString("en-GB").toUpperCase()
@@ -102,6 +102,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       ? a.deadline.toDate().toLocaleDateString("en-GB").toUpperCase()
       : "N/A";
 
+    // --- Row ---
     const row = document.createElement("tr");
 
     row.innerHTML = `
@@ -133,50 +134,40 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
       </td>
     `;
 
-    /* ---------- Elements ---------- */
     const acceptBtn = row.querySelector(".accept-btn");
     const rejectBtn = row.querySelector(".reject-btn");
     const uploadInput = row.querySelector(".upload-input");
     const uploadLabel = row.querySelector(".upload-btn");
     const fileStatus = row.querySelector(".file-status");
 
-    /* ---------- Button locks ---------- */
-    acceptBtn.disabled = isFinalised || isUnderAllocation;
+    // --- Button Locks ---
+    acceptBtn.disabled = isFinalised || isUnderAllocation || isAccepted;
     rejectBtn.disabled = isFinalised || isUnderAllocation;
 
-    if (statusText === "Accepted") {
-      uploadInput.disabled = false;
-      uploadLabel.classList.remove("upload-disabled");
-    } else {
-      uploadInput.disabled = true;
-      uploadLabel.classList.add("upload-disabled");
-    }
+    // --- Upload Only If Accepted and Not Complete ---
+    const canUpload = isAccepted && !isComplete;
+    uploadInput.disabled = !canUpload;
+    if (canUpload) uploadLabel.classList.remove("upload-disabled");
+    else uploadLabel.classList.add("upload-disabled");
 
-    if (isUnderAllocation || isFinalised) {
-      uploadInput.disabled = true;
-      uploadLabel.classList.add("upload-disabled");
-    }
-
-    /* ---------- Accept ---------- */
+    // --- Accept ---
     acceptBtn.onclick = async () => {
-      if (isFinalised || isUnderAllocation) return;
-
+      if (isFinalised || isUnderAllocation || isAccepted) return;
       await updateDoc(doc(db, "assignments", id), {
         status: "Accepted",
         "acceptance-date": serverTimestamp(),
       });
     };
 
-    /* ---------- Reject ---------- */
+    // --- Reject ---
     rejectBtn.onclick = async () => {
       if (isFinalised || isUnderAllocation) return;
-
       await updateDoc(doc(db, "assignments", id), {
         status: "Rejected",
       });
     };
 
-    /* ---------- Upload ---------- */
+    // --- Upload ---
     uploadInput.onchange = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -198,7 +189,7 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
 
       await updateDoc(doc(db, "assignments", id), {
         fileUrl: data.publicUrl,
-        status: "Complete"
+        status: "Complete", // Upload = Complete
       });
 
       fileStatus.textContent = "File uploaded";
