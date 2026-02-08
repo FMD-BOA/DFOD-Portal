@@ -140,15 +140,22 @@ onSnapshot(collection(db, "assignments"), (snapshot) => {
     const uploadLabel = row.querySelector(".upload-btn");
     const fileStatus = row.querySelector(".file-status");
 
-    // --- Button Locks ---
-    acceptBtn.disabled = isFinalised || isUnderAllocation || isAccepted;
-    rejectBtn.disabled = isFinalised || isUnderAllocation;
+// --- Button Locks ---
+if (isAccepted || isComplete || isRejected || isUnderAllocation) {
+  // Nach Annahme / Ablehnung / Completion / Under Allocation: Buttons gesperrt
+  acceptBtn.disabled = true;
+  rejectBtn.disabled = true;
+} else {
+  // Pending: Buttons aktiv
+  acceptBtn.disabled = false;
+  rejectBtn.disabled = false;
+}
 
-    // --- Upload Only If Accepted and Not Complete ---
-    const canUpload = isAccepted && !isComplete;
-    uploadInput.disabled = !canUpload;
-    if (canUpload) uploadLabel.classList.remove("upload-disabled");
-    else uploadLabel.classList.add("upload-disabled");
+// --- Upload Only If Accepted and Not Complete ---
+const canUpload = isAccepted && !isComplete;
+uploadInput.disabled = !canUpload;
+if (canUpload) uploadLabel.classList.remove("upload-disabled");
+else uploadLabel.classList.add("upload-disabled");
 
     // --- Accept ---
     acceptBtn.onclick = async () => {
